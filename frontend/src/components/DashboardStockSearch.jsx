@@ -10,31 +10,32 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import axios from "axios";
+import { stockData } from "../../assets/NASDAQ";
 
 const StockSearchBar = ({ handleSectionNameSubmit }) => {
   const [query, setQuery] = useState("");
-  const [stocks, setStocks] = useState([]);
+  const [stocks, setStocks] = useState(stockData.data); //useState([]);
   const [filteredStocks, setFilteredStocks] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [newSectionName, setNewSectionName] = useState("");
 
   // Fetch stocks data from the API on component mount
-  useEffect(() => {
-    const fetchStocks = async () => {
-      setIsLoading(true);
-      try {
-        const response = await axios.get(
-          "https://api.twelvedata.com/stocks?exchange=NASDAQ"
-        );
-        setStocks(response.data.data || []); // Store all stocks in state
-      } catch (error) {
-        console.error("Failed to fetch stocks:", error);
-      }
-      setIsLoading(false);
-    };
+//   useEffect(() => {
+//     const fetchStocks = async () => {
+//       setIsLoading(true);
+//       try {
+//         const response = await axios.get(
+//           "https://api.twelvedata.com/stocks?exchange=NASDAQ"
+//         );
+//         setStocks(response.data.data || []); // Store all stocks in state
+//       } catch (error) {
+//         console.error("Failed to fetch stocks:", error);
+//       }
+//       setIsLoading(false);
+//     };
 
-    fetchStocks();
-  }, []);
+//     fetchStocks();
+//   }, []);
 
   // Filter stocks based on query input
   useEffect(() => {
@@ -44,7 +45,7 @@ const StockSearchBar = ({ handleSectionNameSubmit }) => {
           (stock) =>
             stock.symbol.toLowerCase().includes(query.toLowerCase()) ||
             stock.name.toLowerCase().includes(query.toLowerCase())
-        )
+        ).splice(0, 20)
       );
     } else {
       setFilteredStocks([]);
