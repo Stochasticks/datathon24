@@ -29,11 +29,12 @@ def load_ticker_dict():
 @app.route('/api/tickerinfo', methods=['GET'])
 def ticker_info():
     ticker = request.args.get('ticker')
+    metric = request.args.get('metric')
     if ticker not in ticker_dict:
         return jsonify({"error": "Ticker not found"}), 404
 
     ticker_cik = ticker_dict[ticker]
-    url = f"https://data.sec.gov/api/xbrl/companyconcept/CIK{ticker_cik}/us-gaap/Assets.json"
+    url = f"https://data.sec.gov/api/xbrl/companyconcept/CIK{ticker_cik}/us-gaap/{metric}.json"
 
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
