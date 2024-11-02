@@ -6,6 +6,7 @@
     "build:dev": "webpack --mode development",
     "build:start": "cd dist && PORT=3000 npx serve",
     "start": "webpack serve --mode development",
+    "start:prod": "webpack serve --mode production",
     "start:live": "webpack serve --mode development --live-reload --hot"
   },
   "license": "MIT",

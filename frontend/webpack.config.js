@@ -9,7 +9,7 @@ const printCompilationMessage = require('./compilation.config.js');
 
 module.exports = (_, argv) => ({
   output: {
-    publicPath: "http://localhost:3000/",
+    publicPath: argv.mode === 'production' ? "https://main.dmfjhi35mqoi1.amplifyapp.com/" :  "http://localhost:3000/",
   },
 
   resolve: {
