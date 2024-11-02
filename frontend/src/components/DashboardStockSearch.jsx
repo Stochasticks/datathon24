@@ -58,7 +58,7 @@ const StockSearchBar = ({ handleSectionNameSubmit }) => {
     setNewSectionName(stock.name);
     setQuery(stock.name);
     setFilteredStocks([]);
-    handleSectionNameSubmit(stock.symbol)
+    handleSectionNameSubmit(`${stock.symbol} - ${stock.name}`)
   };
 
   return (

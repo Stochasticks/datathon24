@@ -14,7 +14,7 @@ const DashboardSidebar = ({ setSelectedSection, addNewSection, sections }) => {
             cursor="pointer"
             onClick={() => setSelectedSection(section)}
           >
-            {section}
+            {section.split('-')[0].trim()}
           </Text>
         ))}
         <Button size="sm" onClick={addNewSection}>
