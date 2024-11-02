@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Flex,
@@ -37,6 +37,7 @@ import { LineGraph } from "./LineGraph";
 import CosineMatrix from "./CosineMatrix";
 import { TSNEScatter } from "./TSNEScatter";
 import StockSearchBar from "./DashboardStockSearch";
+import StockOverview from "./StockOverview";
 
 // Sample data for the charts
 const data = [
@@ -46,36 +47,46 @@ const data = [
 ];
 
 // Available chart types
-const chartTypes = {
-  Line: (
-    <LineChart width={300} height={150} data={data}>
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" />
-      <YAxis />
-      <Tooltip />
-      <Legend />
-      <Line type="monotone" dataKey="pv" stroke="#8884d8" />
-    </LineChart>
-  ),
-  Bar: (
-    <BarChart width={300} height={150} data={data}>
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" />
-      <YAxis />
-      <Tooltip />
-      <Legend />
-      <Bar dataKey="pv" fill="#8884d8" />
-    </BarChart>
-  ),
-  Quotes: <LineGraph width={300} height={150} />,
-  Cosine: <CosineMatrix width={300} height={150} />,
-  "t-SNE": <TSNEScatter width={300} height={150} />,
+const chartTypes = (props) => {
+  return {
+    Line: (
+      <LineChart width={300} height={150} data={data}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Line type="monotone" dataKey="pv" stroke="#8884d8" />
+      </LineChart>
+    ),
+    Bar: (
+      <BarChart width={300} height={150} data={data}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Bar dataKey="pv" fill="#8884d8" />
+      </BarChart>
+    ),
+    Quotes: <LineGraph width={300} height={150} />,
+    Cosine: <CosineMatrix width={300} height={150} />,
+    "t-SNE": <TSNEScatter width={300} height={150} />,
+    Overview: <StockOverview symbol={props.symbol} width={300} height={150}/>,
+  };
 };
 
 const Dashboard = () => {
   const [selectedSection, setSelectedSection] = useState("Company 1");
   const [sections, setSections] = useState({
-    "Company 1": [{ chartType: "Quotes", fullSize: true }],
+    "AAPL - Apple Inc": [
+      { name: "Overview", chartType: "Overview", fullSize: true },
+      { name: "Fundamentals", chartType: "Quotes", fullSize: true },
+    ],
+    "Company 1": [
+      { chartType: "Quotes", fullSize: true },
+      { chartType: "Quotes", fullSize: true },
+    ],
     // "Test 1": [{ chartType: "Quotes", fullSize: true }],
     // "Test 2": [{ chartType: "Cosine", fullSize: true }],
     // "Test 3": [{ chartType: "t-SNE", fullSize: true }],
@@ -114,7 +125,7 @@ const Dashboard = () => {
 
   const renderChart = (type, fullSize, chartKey) =>
     type ? (
-      React.cloneElement(chartTypes[type], {
+      React.cloneElement(chartTypes({symbol: selectedSection.split('-')[0].trim()})[type], {
         key: `${type}-${chartKey}`,
         width: fullSize ? 700 : 300,
         height: fullSize ? 400 : 150,
@@ -123,10 +134,21 @@ const Dashboard = () => {
       <Text>Add a chart</Text>
     );
 
+
+  // Function to toggle chart size (default or full size)
+  const toggleChartSize = (section, chartIdx) => {
+    const updatedSection = [...sections[section]];
+    updatedSection[chartIdx].fullSize = !updatedSection[chartIdx].fullSize;
+    setSections((prevSections) => ({
+      ...prevSections,
+      [section]: updatedSection,
+    }));
+  };
+
   // Function to update section name
   const handleSectionNameSubmit = (value) => {
-    console.log('entered')
-    console
+    console.log("entered");
+    console;
     if (value) {
       setSections((prevSections) => {
         const updatedSections = { ...prevSections };
@@ -140,6 +162,10 @@ const Dashboard = () => {
   };
 
   // Other functions remain the same as before
+
+  useEffect(() => {
+    setSelectedSection(Object.keys(sections)[0]);
+  }, []);
 
   return (
     <ChakraProvider>
@@ -173,80 +199,89 @@ const Dashboard = () => {
 
           {/* Render the rest of your dashboard content as before */}
           {/* Tabs for each section, add charts, etc. */}
-          {!selectedSection.startsWith("Company") && Object.keys(sections).map((sectionKey, sectionIdx) => (
-            <Box
-              key={sectionKey}
-              display={selectedSection === sectionKey ? "block" : "none"}
-            >
-              {/* <Text fontSize="xl" mb="4">{`Section ${sectionIdx + 1}`}</Text> */}
-              <Tabs>
-                <TabList>
-                  {sections[sectionKey].map((_, idx) => (
-                    <Tab key={`${sectionKey}-${idx}`}>{`Chart ${idx + 1}`}</Tab>
-                  ))}
-                  <Button size="sm" ml="2" onClick={() => addChart(sectionKey)}>
-                    + Add Chart
-                  </Button>
-                </TabList>
+          {!selectedSection.startsWith("Company") &&
+            Object.keys(sections).map((sectionKey, sectionIdx) => (
+              <Box
+                key={sectionKey}
+                display={selectedSection === sectionKey ? "block" : "none"}
+              >
+                {/* <Text fontSize="xl" mb="4">{`Section ${sectionIdx + 1}`}</Text> */}
+                <Tabs>
+                  <TabList>
+                    {sections[sectionKey].map((section, idx) => (
+                      <Tab key={`${sectionKey}-${idx}`}>
+                        {section?.name || `Chart ${idx + 1}`}
+                      </Tab>
+                    ))}
+                    <Button
+                      size="sm"
+                      ml="2"
+                      onClick={() => addChart(sectionKey)}
+                    >
+                      + Add Chart
+                    </Button>
+                  </TabList>
 
-                <TabPanels>
-                  {sections[sectionKey].map(({ chartType, fullSize }, idx) => (
-                    <TabPanel key={`${sectionKey}-${idx}`}>
-                      <Flex justify="space-between" mb="4">
-                        <Text fontSize="lg">Chart {idx + 1}</Text>
-                        <HStack spacing="4">
-                          {/* Toggle chart size button */}
-                          <Button
-                            size="sm"
-                            onClick={() => toggleChartSize(sectionKey, idx)}
-                          >
-                            {fullSize ? "Default Size" : "Full Size"}
-                          </Button>
+                  <TabPanels>
+                    {sections[sectionKey].map(
+                      ({ chartType, fullSize }, idx) => (
+                        <TabPanel key={`${sectionKey}-${idx}`}>
+                          <Flex justify="space-between" mb="4">
+                            <Text fontSize="lg">Chart {idx + 1}</Text>
+                            <HStack spacing="4">
+                              {/* Toggle chart size button */}
+                              <Button
+                                size="sm"
+                                onClick={() => toggleChartSize(sectionKey, idx)}
+                              >
+                                {fullSize ? "Default Size" : "Full Size"}
+                              </Button>
 
-                          {/* Chart type selector */}
-                          <Menu>
-                            <MenuButton
-                              as={Button}
-                              size="sm"
-                              rightIcon={<ChevronDownIcon />}
-                            >
-                              {chartType
-                                ? `${chartType} Chart`
-                                : "Select Chart"}
-                            </MenuButton>
-                            <MenuList>
-                              {Object.keys(chartTypes).map((type) => (
-                                <MenuItem
-                                  key={type}
-                                  onClick={() =>
-                                    setChartType(sectionKey, idx, type)
-                                  }
+                              {/* Chart type selector */}
+                              <Menu>
+                                <MenuButton
+                                  as={Button}
+                                  size="sm"
+                                  rightIcon={<ChevronDownIcon />}
                                 >
-                                  {type} Chart
-                                </MenuItem>
-                              ))}
-                            </MenuList>
-                          </Menu>
-                        </HStack>
-                      </Flex>
+                                  {chartType
+                                    ? `${chartType} Chart`
+                                    : "Select Chart"}
+                                </MenuButton>
+                                <MenuList>
+                                  {Object.keys(chartTypes({})).map((type) => (
+                                    <MenuItem
+                                      key={type}
+                                      onClick={() =>
+                                        setChartType(sectionKey, idx, type)
+                                      }
+                                    >
+                                      {type} Chart
+                                    </MenuItem>
+                                  ))}
+                                </MenuList>
+                              </Menu>
+                            </HStack>
+                          </Flex>
 
-                      {/* Render chart */}
-                      <Box
-                        p="2"
-                        bg={useColorModeValue("gray.100", "gray.700")}
-                        rounded="md"
-                        shadow="md"
-                      >
-                        {/* {renderChart(chartType, fullSize, `${chartType}-${fullSize}`)} */}
-                        {renderChart(chartType, fullSize)}
-                        <Text>Test Chart sub-section</Text>
-                      </Box>
-                    </TabPanel>
-                  ))}
-                </TabPanels>
-              </Tabs>
-            </Box>
-          ))}
+                          {/* Render chart */}
+                          <Box
+                            p="2"
+                            bg={useColorModeValue("gray.100", "gray.700")}
+                            rounded="md"
+                            shadow="md"
+                          >
+                            {/* {renderChart(chartType, fullSize, `${chartType}-${fullSize}`)} */}
+                            {renderChart(chartType, fullSize)}
+                            <Text>Test Chart sub-section</Text>
+                          </Box>
+                        </TabPanel>
+                      )
+                    )}
+                  </TabPanels>
+                </Tabs>
+              </Box>
+            ))}
         </Box>
       </Flex>
     </ChakraProvider>
