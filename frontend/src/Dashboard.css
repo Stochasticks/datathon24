@@ -1,0 +1,60 @@
+.Dashboard {
+    position:fixed;
+    width: 100%;
+}
+
+.Dashboard-content {
+    top: 8%;
+    bottom:2%;
+    position:fixed;
+    overflow-y:scroll;
+    overflow-x:hidden;
+    width: 90%;
+}
+  
+.def-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two equal-width columns */
+    grid-template-rows: 1fr 1fr; /* Two equal-height rows */
+    gap: 10px; /* Adjust the gap between elements as needed */
+    max-height: 80vh; /* Adjust the container height */
+    width: 85vw
+}
+
+.box {
+    margin:1% 1%;
+}
+
+.vert-grid {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 10px; /* Adjust the gap between elements as needed */
+    width: 85vw;
+    min-height: 100vh;
+}
+
+.box-vert {
+    width: 85%;
+    height: 80vh;
+    margin: 0% 1%;
+}
+
+.fe {
+    grid-column: 1; /* Place in the first column */
+    grid-row: 1 / span 2; /* Span across both rows */
+    background-color: #f0f0f0; /* Add background color for visibility */
+}
+
+.se-t {
+    grid-column: 2; /* Place in the second column */
+    grid-row: 1; /* Top row */
+    background-color: #d0d0d0; /* Add background color for visibility */
+}
+
+.se-b {
+    grid-column: 2; /* Place in the second column */
+    grid-row: 2; /* Bottom row */
+    background-color: #b0b0b0; /* Add background color for visibility */
+}
