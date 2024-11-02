@@ -36,6 +36,7 @@ import DashboardSectionHeader from "./DashboardSectionHeader";
 import { LineGraph } from "./LineGraph";
 import CosineMatrix from "./CosineMatrix";
 import { TSNEScatter } from "./TSNEScatter";
+import StockSearchBar from "./DashboardStockSearch";
 
 // Sample data for the charts
 const data = [
@@ -75,9 +76,9 @@ const Dashboard = () => {
   const [selectedSection, setSelectedSection] = useState("Company 1");
   const [sections, setSections] = useState({
     "Company 1": [{ chartType: "Quotes", fullSize: true }],
-    "Test 1": [{ chartType: "Quotes", fullSize: true }],
-    "Test 2": [{ chartType: "Cosine", fullSize: true }],
-    "Test 3": [{ chartType: "t-SNE", fullSize: true }],
+    // "Test 1": [{ chartType: "Quotes", fullSize: true }],
+    // "Test 2": [{ chartType: "Cosine", fullSize: true }],
+    // "Test 3": [{ chartType: "t-SNE", fullSize: true }],
   });
   const [newSectionName, setNewSectionName] = useState("");
 
@@ -90,6 +91,15 @@ const Dashboard = () => {
     }));
     setSelectedSection(sectionKey);
     setNewSectionName(""); // Clear the input field
+  };
+
+  const setChartType = (section, chartIdx, type) => {
+    const updatedSection = [...sections[section]];
+    updatedSection[chartIdx].chartType = type;
+    setSections((prevSections) => ({
+      ...prevSections,
+      [section]: updatedSection,
+    }));
   };
 
   const addChart = (section) => {
@@ -114,15 +124,17 @@ const Dashboard = () => {
     );
 
   // Function to update section name
-  const handleSectionNameSubmit = () => {
-    if (newSectionName.trim()) {
+  const handleSectionNameSubmit = (value) => {
+    console.log('entered')
+    console
+    if (value) {
       setSections((prevSections) => {
         const updatedSections = { ...prevSections };
-        updatedSections[newSectionName] = updatedSections[selectedSection];
+        updatedSections[value] = updatedSections[selectedSection];
         delete updatedSections[selectedSection];
         return updatedSections;
       });
-      setSelectedSection(newSectionName);
+      setSelectedSection(value);
       setNewSectionName("");
     }
   };
@@ -145,17 +157,18 @@ const Dashboard = () => {
 
           {/* Render search bar for renaming new sections */}
           {selectedSection.startsWith("Company") && (
-            <Box mb="4">
-              <Input
-                placeholder="Enter section name"
-                value={newSectionName}
-                onChange={(e) => setNewSectionName(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSectionNameSubmit()}
-              />
-              <Button onClick={handleSectionNameSubmit} mt="2">
-                Update Section Name
-              </Button>
-            </Box>
+            // <Box mb="4">
+            //   <Input
+            //     placeholder="Enter section name"
+            //     value={newSectionName}
+            //     onChange={(e) => setNewSectionName(e.target.value)}
+            //     onKeyDown={(e) => e.key === "Enter" && handleSectionNameSubmit()}
+            //   />
+            //   <Button onClick={handleSectionNameSubmit} mt="2">
+            //     Start Analysis
+            //   </Button>
+            // </Box>
+            <StockSearchBar handleSectionNameSubmit={handleSectionNameSubmit} />
           )}
 
           {/* Render the rest of your dashboard content as before */}
