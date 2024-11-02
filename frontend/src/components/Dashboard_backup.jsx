@@ -17,7 +17,6 @@ import {
   MenuItem,
   ChakraProvider,
   useColorModeValue,
-  Input,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
@@ -66,32 +65,26 @@ const chartTypes = {
       <Bar dataKey="pv" fill="#8884d8" />
     </BarChart>
   ),
-  Quotes: <LineGraph width={300} height={150} />,
-  Cosine: <CosineMatrix width={300} height={150} />,
-  "t-SNE": <TSNEScatter width={300} height={150} />,
+  Quotes: (
+    <LineGraph width={300} height={150} />
+  ),
+  Cosine: (
+    <CosineMatrix width={300} height={150} />
+  ),
+  "t-SNE": (
+    <TSNEScatter width={300} height={150} />
+  ),
 };
 
 const Dashboard = () => {
-  const [selectedSection, setSelectedSection] = useState("Company 1");
+  const [selectedSection, setSelectedSection] = useState("Charts");
   const [sections, setSections] = useState({
-    "Company 1": [{ chartType: "Quotes", fullSize: true }],
-    "Test 1": [{ chartType: "Quotes", fullSize: true }],
-    "Test 2": [{ chartType: "Cosine", fullSize: true }],
-    "Test 3": [{ chartType: "t-SNE", fullSize: true }],
+    Charts: [{ chartType: 'Quotes', fullSize: true }],
+    "Section 2": [{ chartType: 'Cosine', fullSize: true }],
+    "Section 3": [{ chartType: 't-SNE', fullSize: true }],
   });
-  const [newSectionName, setNewSectionName] = useState("");
 
-  // Function to add a new section without an initial name
-  const addNewSection = () => {
-    const sectionKey = `Company ${Object.keys(sections).length + 1}`;
-    setSections((prevSections) => ({
-      ...prevSections,
-      [sectionKey]: [],
-    }));
-    setSelectedSection(sectionKey);
-    setNewSectionName(""); // Clear the input field
-  };
-
+  // Function to handle adding a new chart to a section
   const addChart = (section) => {
     setSections((prevSections) => ({
       ...prevSections,
@@ -102,6 +95,27 @@ const Dashboard = () => {
     }));
   };
 
+  // Function to toggle chart size (default or full size)
+  const toggleChartSize = (section, chartIdx) => {
+    const updatedSection = [...sections[section]];
+    updatedSection[chartIdx].fullSize = !updatedSection[chartIdx].fullSize;
+    setSections((prevSections) => ({
+      ...prevSections,
+      [section]: updatedSection,
+    }));
+  };
+
+  // Function to set chart type for a specific chart slot
+  const setChartType = (section, chartIdx, type) => {
+    const updatedSection = [...sections[section]];
+    updatedSection[chartIdx].chartType = type;
+    setSections((prevSections) => ({
+      ...prevSections,
+      [section]: updatedSection,
+    }));
+  };
+
+  // Render the selected chart based on type
   const renderChart = (type, fullSize, chartKey) =>
     type ? (
       React.cloneElement(chartTypes[type], {
@@ -113,54 +127,33 @@ const Dashboard = () => {
       <Text>Add a chart</Text>
     );
 
-  // Function to update section name
-  const handleSectionNameSubmit = () => {
-    if (newSectionName.trim()) {
-      setSections((prevSections) => {
-        const updatedSections = { ...prevSections };
-        updatedSections[newSectionName] = updatedSections[selectedSection];
-        delete updatedSections[selectedSection];
-        return updatedSections;
-      });
-      setSelectedSection(newSectionName);
-      setNewSectionName("");
-    }
-  };
-
-  // Other functions remain the same as before
+  // const renderChart = (type, fullSize) => {
+  //   const chartComponent = useMemo(() => {
+  //     return type ? chartTypes[type] : null;
+  //   }, [type]);
+  
+  //   return chartComponent ? (
+  //     React.cloneElement(chartComponent, {
+  //       width: fullSize ? 700 : 300,
+  //       height: fullSize ? 400 : 150,
+  //     })
+  //   ) : (
+  //     <Text>Add a chart</Text>
+  //   );
+  // };
 
   return (
     <ChakraProvider>
       <Flex height="100vh">
         {/* Sidebar */}
-        <DashboardSidebar
-          setSelectedSection={setSelectedSection}
-          addNewSection={addNewSection}
-          sections={Object.keys(sections)}
-        />
+        <DashboardSidebar setSelectedSection={setSelectedSection} />
 
         {/* Main content area */}
         <Box flex="1" p="4">
           <DashboardSectionHeader title={selectedSection} />
 
-          {/* Render search bar for renaming new sections */}
-          {selectedSection.startsWith("Company") && (
-            <Box mb="4">
-              <Input
-                placeholder="Enter section name"
-                value={newSectionName}
-                onChange={(e) => setNewSectionName(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSectionNameSubmit()}
-              />
-              <Button onClick={handleSectionNameSubmit} mt="2">
-                Update Section Name
-              </Button>
-            </Box>
-          )}
-
-          {/* Render the rest of your dashboard content as before */}
-          {/* Tabs for each section, add charts, etc. */}
-          {!selectedSection.startsWith("Company") && Object.keys(sections).map((sectionKey, sectionIdx) => (
+          {/* Render tabs for the selected section */}
+          {Object.keys(sections).map((sectionKey, sectionIdx) => (
             <Box
               key={sectionKey}
               display={selectedSection === sectionKey ? "block" : "none"}
