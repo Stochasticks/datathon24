@@ -11,23 +11,25 @@ import {
 import { Button, ButtonGroup } from "@chakra-ui/react"; // For Chakra UI
 
 import axios from "axios";
+import { useDataContext } from "../contexts/DataContext";
 
 const StockOverview = ({ symbol, width, height }) => {
   const [data, setData] = useState([]);
   const [timeframe, setTimeframe] = useState("1month"); // Default timeframe set to 1 month
+  const { state } = useDataContext();
 
   useEffect(() => {
     const fetchHistoricalData = async () => {
-        console.log('symbol: ', symbol)
-        console.log('entered: ', timeframe)
+      console.log("symbol: ", symbol);
+      console.log("entered: ", timeframe);
       const outputSizeMap = {
-        "1month": 30,   // approximately 1 month of trading days
-        "3months": 90,   // approximately 1 month of trading days
+        "1month": 30, // approximately 1 month of trading days
+        "3months": 90, // approximately 1 month of trading days
         "6months": 180, // approximately 6 months of trading days
-        "1year": 252,   // approximately 1 year of trading days
+        "1year": 252, // approximately 1 year of trading days
         "5years": 1260, // approximately 5 years of trading days
       };
-      
+
       try {
         const response = await axios.get(
           `https://api.twelvedata.com/time_series?symbol=${symbol}&interval=1day&outputsize=${outputSizeMap[timeframe]}&apikey=581a77adc42044f5aad1ce98cde830c0`
@@ -58,8 +60,16 @@ const StockOverview = ({ symbol, width, height }) => {
     if (active && payload && payload.length) {
       const { open, high, low, close } = payload[0].payload;
       return (
-        <div style={{ backgroundColor: "#ffffff", border: "1px solid #cccccc", padding: "10px" }}>
-          <p><strong>{new Date(label).toLocaleDateString()}</strong></p>
+        <div
+          style={{
+            backgroundColor: "#ffffff",
+            border: "1px solid #cccccc",
+            padding: "10px",
+          }}
+        >
+          <p>
+            <strong>{new Date(label).toLocaleDateString()}</strong>
+          </p>
           <p>Open: {open}</p>
           <p>High: {high}</p>
           <p>Low: {low}</p>
@@ -71,51 +81,56 @@ const StockOverview = ({ symbol, width, height }) => {
   };
 
   return (
-    <div>
-      <ButtonGroup spacing="2" mb="4">
-        <Button 
-          colorScheme={timeframe === "1month" ? "blue" : "gray"} 
-          onClick={() => setTimeframe("1month")}
-        >
-          1 Month
-        </Button>
-        <Button 
-          colorScheme={timeframe === "3months" ? "blue" : "gray"} 
-          onClick={() => setTimeframe("3months")}
-        >
-          3 Months
-        </Button>
-        <Button 
-          colorScheme={timeframe === "6months" ? "blue" : "gray"} 
-          onClick={() => setTimeframe("6months")}
-        >
-          6 Months
-        </Button>
-        <Button 
-          colorScheme={timeframe === "1year" ? "blue" : "gray"} 
-          onClick={() => setTimeframe("1year")}
-        >
-          1 Year
-        </Button>
-        <Button 
-          colorScheme={timeframe === "5years" ? "blue" : "gray"} 
-          onClick={() => setTimeframe("5years")}
-        >
-          5 Years
-        </Button>
-      </ButtonGroup>
+    <div style={{display: 'flex', gap:'20px'}}>
+      <div>
+        <ButtonGroup spacing="2" mb="4">
+          <Button
+            colorScheme={timeframe === "1month" ? "blue" : "gray"}
+            onClick={() => setTimeframe("1month")}
+          >
+            1 Month
+          </Button>
+          <Button
+            colorScheme={timeframe === "3months" ? "blue" : "gray"}
+            onClick={() => setTimeframe("3months")}
+          >
+            3 Months
+          </Button>
+          <Button
+            colorScheme={timeframe === "6months" ? "blue" : "gray"}
+            onClick={() => setTimeframe("6months")}
+          >
+            6 Months
+          </Button>
+          <Button
+            colorScheme={timeframe === "1year" ? "blue" : "gray"}
+            onClick={() => setTimeframe("1year")}
+          >
+            1 Year
+          </Button>
+          <Button
+            colorScheme={timeframe === "5years" ? "blue" : "gray"}
+            onClick={() => setTimeframe("5years")}
+          >
+            5 Years
+          </Button>
+        </ButtonGroup>
 
-      <LineChart width={width} height={height} data={data}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis
-          dataKey="date"
-          tickFormatter={(date) => new Date(date).toLocaleDateString()}
-        />
-        <YAxis />
-        <Tooltip content={<CustomTooltip />} />
-        <Legend />
-        <Line type="monotone" dataKey="close" stroke="#8884d8" />
-      </LineChart>
+        <LineChart width={width} height={height} data={data}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis
+            dataKey="date"
+            tickFormatter={(date) => new Date(date).toLocaleDateString()}
+          />
+          <YAxis />
+          <Tooltip content={<CustomTooltip />} />
+          <Legend />
+          <Line type="monotone" dataKey="close" stroke="#8884d8" />
+        </LineChart>
+      </div>
+      {
+        JSON.stringify(state.assets, null, 2)
+      }
     </div>
   );
 };

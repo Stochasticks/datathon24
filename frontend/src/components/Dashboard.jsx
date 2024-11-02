@@ -38,6 +38,7 @@ import CosineMatrix from "./CosineMatrix";
 import { TSNEScatter } from "./TSNEScatter";
 import StockSearchBar from "./DashboardStockSearch";
 import StockOverview from "./StockOverview";
+import { useDataContext } from "../contexts/DataContext";
 
 // Sample data for the charts
 const data = [
@@ -69,11 +70,11 @@ const chartTypes = (props) => {
         <Bar dataKey="pv" fill="#8884d8" />
       </BarChart>
     ),
-    Quotes: <LineGraph width={300} height={150} />,
-    Cosine: <CosineMatrix width={300} height={150} />,
-    "t-SNE": <TSNEScatter width={300} height={150} />,
+    // Quotes: <LineGraph width={300} height={150} />,
+    // Cosine: <CosineMatrix width={300} height={150} />,
+    // "t-SNE": <TSNEScatter width={300} height={150} />,
     Overview: <StockOverview symbol={props.symbol} width={300} height={150} />,
-    Sentiment: <div></div>,
+    Sentiment: <div>dd</div>,
   };
 };
 
@@ -82,19 +83,26 @@ const Dashboard = () => {
   const [sections, setSections] = useState({
     "AAPL - Apple Inc": [
       { name: "Overview", chartType: "Overview", fullSize: true },
-      { name: "Financials", chartType: "Quotes", fullSize: true },
+      { name: "Financials", chartType: "Sentiment", fullSize: true },
       { name: "Sentiment Analysis", chartType: "Sentiment", fullSize: true },
     ],
     "Company 1": [
       { name: "Overview", chartType: "Overview", fullSize: true },
-      { name: "Financials", chartType: "Quotes", fullSize: true },
+      { name: "Financials", chartType: "Sentiment", fullSize: true },
       { name: "Sentiment Analysis", chartType: "Sentiment", fullSize: true },
-    ],
-    // "Test 1": [{ chartType: "Quotes", fullSize: true }],
-    // "Test 2": [{ chartType: "Cosine", fullSize: true }],
-    // "Test 3": [{ chartType: "t-SNE", fullSize: true }],
+    ]
   });
   const [newSectionName, setNewSectionName] = useState("");
+  const { state, fetchData } = useDataContext();
+
+  // Fetching all the data needed for a dashboard
+  const fetchAllData = (symbol) => {
+    fetchData("assets", "https://u2et6buhf3.execute-api.us-west-2.amazonaws.com/ticker_info/tickerinfo?ticker=AAPL&metric=Assets");
+  }
+  
+  useEffect(() => {
+    fetchAllData('AAPL');
+  }, []);
 
   // Function to add a new section without an initial name
   const addNewSection = () => {
@@ -155,6 +163,7 @@ const Dashboard = () => {
     console.log("entered");
     console;
     if (value) {
+      fetchAllData(value.split("-")[0].trim());
       setSections((prevSections) => {
         const updatedSections = { ...prevSections };
         console.log(
@@ -164,7 +173,7 @@ const Dashboard = () => {
 
         updatedSections[value] = [
           { name: "Overview", chartType: "Overview", fullSize: true },
-          { name: "Financials", chartType: "Quotes", fullSize: true },
+          { name: "Financials", chartType: "Sentiment", fullSize: true },
           {
             name: "Sentiment Analysis",
             chartType: "Sentiment",

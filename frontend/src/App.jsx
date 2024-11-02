@@ -14,6 +14,7 @@ import {
 
 import "./index.css";
 import Dashboard from "./components/Dashboard";
+import { DataProvider } from "./contexts/DataContext";
 
 
 const App = () => {
@@ -25,10 +26,12 @@ const App = () => {
             path="/"
             element={
               <ChakraProvider>
-                <UseChannelsDataContext>
+                {/* <UseChannelsDataContext> */}
                   {/* <DashboardPage /> */}
-                  <Dashboard />
-                </UseChannelsDataContext>
+                  <DataProvider>
+                    <Dashboard />
+                  </DataProvider>
+                {/* </UseChannelsDataContext> */}
               </ChakraProvider>
             }
           />
