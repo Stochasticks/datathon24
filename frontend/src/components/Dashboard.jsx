@@ -72,7 +72,8 @@ const chartTypes = (props) => {
     Quotes: <LineGraph width={300} height={150} />,
     Cosine: <CosineMatrix width={300} height={150} />,
     "t-SNE": <TSNEScatter width={300} height={150} />,
-    Overview: <StockOverview symbol={props.symbol} width={300} height={150}/>,
+    Overview: <StockOverview symbol={props.symbol} width={300} height={150} />,
+    Sentiment: <div></div>,
   };
 };
 
@@ -81,11 +82,13 @@ const Dashboard = () => {
   const [sections, setSections] = useState({
     "AAPL - Apple Inc": [
       { name: "Overview", chartType: "Overview", fullSize: true },
-      { name: "Fundamentals", chartType: "Quotes", fullSize: true },
+      { name: "Financials", chartType: "Quotes", fullSize: true },
+      { name: "Sentiment Analysis", chartType: "Sentiment", fullSize: true },
     ],
     "Company 1": [
-      { chartType: "Quotes", fullSize: true },
-      { chartType: "Quotes", fullSize: true },
+      { name: "Overview", chartType: "Overview", fullSize: true },
+      { name: "Financials", chartType: "Quotes", fullSize: true },
+      { name: "Sentiment Analysis", chartType: "Sentiment", fullSize: true },
     ],
     // "Test 1": [{ chartType: "Quotes", fullSize: true }],
     // "Test 2": [{ chartType: "Cosine", fullSize: true }],
@@ -125,15 +128,17 @@ const Dashboard = () => {
 
   const renderChart = (type, fullSize, chartKey) =>
     type ? (
-      React.cloneElement(chartTypes({symbol: selectedSection.split('-')[0].trim()})[type], {
-        key: `${type}-${chartKey}`,
-        width: fullSize ? 700 : 300,
-        height: fullSize ? 400 : 150,
-      })
+      React.cloneElement(
+        chartTypes({ symbol: selectedSection.split("-")[0].trim() })[type],
+        {
+          key: `${type}-${chartKey}`,
+          width: fullSize ? 700 : 300,
+          height: fullSize ? 400 : 150,
+        }
+      )
     ) : (
       <Text>Add a chart</Text>
     );
-
 
   // Function to toggle chart size (default or full size)
   const toggleChartSize = (section, chartIdx) => {
@@ -152,7 +157,20 @@ const Dashboard = () => {
     if (value) {
       setSections((prevSections) => {
         const updatedSections = { ...prevSections };
-        updatedSections[value] = updatedSections[selectedSection];
+        console.log(
+          "updatedSections[selectedSection]",
+          updatedSections[selectedSection]
+        );
+
+        updatedSections[value] = [
+          { name: "Overview", chartType: "Overview", fullSize: true },
+          { name: "Financials", chartType: "Quotes", fullSize: true },
+          {
+            name: "Sentiment Analysis",
+            chartType: "Sentiment",
+            fullSize: true,
+          },
+        ];
         delete updatedSections[selectedSection];
         return updatedSections;
       });

@@ -18,6 +18,7 @@ const StockOverview = ({ symbol, width, height }) => {
 
   useEffect(() => {
     const fetchHistoricalData = async () => {
+        console.log('symbol: ', symbol)
         console.log('entered: ', timeframe)
       const outputSizeMap = {
         "1month": 30,   // approximately 1 month of trading days
