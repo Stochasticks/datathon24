@@ -18,16 +18,18 @@ import {
 } from "@chakra-ui/react";
 import React, { useState, useRef, useEffect } from "react";
 import { FiUpload, FiSend } from "react-icons/fi";
+import { environment } from "./environments/environment";
+import LoadingSpinner from "./components/LoadingSpinner";
 
 const ChatsPage = () => {
-  const [files, setFiles] = useState([]);
   const [tabIndex, setTabIndex] = useState(0);
   const [tabs, setTabs] = useState([
-    { chatId: "", files: [], messages: [], question: "" },
+    { chatId: "", messages: [], question: "", file: null },
   ]);
-  const [uploading, setUploading] = useState(false);
   const [uploadMessage, setUploadMessage] = useState("");
   const [chatMessage, setChatMessage] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const messagesEndRef = useRef(null);
 
@@ -40,47 +42,14 @@ const ChatsPage = () => {
   }, [tabs[tabIndex]?.messages]);
 
   const handleFileChange = (e) => {
-    const selectedFiles = Array.from(e.target.files);
-    setTabs((prevTabs) => {
-      const newTabs = [...prevTabs];
-      newTabs[tabIndex].files = selectedFiles;
-      return newTabs;
-    });
-  };
-
-  const handleFileUpload = async () => {
-    const currentTab = tabs[tabIndex];
-    if (currentTab.files.length === 0) {
-      alert("Please select files to upload.");
-      return;
-    }
-    setUploading(true);
-    setUploadMessage("");
-    const formData = new FormData();
-    for (const file of currentTab.files) {
-      formData.append("files", file);
-    }
-
-    try {
-      const response = await fetch("http://localhost:8501/api/upload", {
-        method: "POST",
-        body: formData,
+    const file = e.target.files[0]; // Only one file for simplicity
+    if (file) {
+      setSelectedFile(file);
+      setTabs((prevTabs) => {
+        const newTabs = [...prevTabs];
+        newTabs[tabIndex].file = file; // Store the file in the current tab
+        return newTabs;
       });
-      const data = await response.json();
-      if (response.ok) {
-        setTabs((prevTabs) => {
-          const newTabs = [...prevTabs];
-          newTabs[tabIndex].chatId = data.chat_id;
-          return newTabs;
-        });
-        setUploadMessage("Files successfully uploaded, how can I help you?");
-      } else {
-        setUploadMessage(`Upload error: ${data.error}`);
-      }
-    } catch (error) {
-      setUploadMessage(`Upload failed: ${error.message}`);
-    } finally {
-      setUploading(false);
     }
   };
 
@@ -94,44 +63,82 @@ const ChatsPage = () => {
   };
 
   const handleChat = async () => {
+    console.log("entered ");
+    setLoading(true);
     const currentTab = tabs[tabIndex];
-    if (!currentTab.chatId || !currentTab.question) {
-      alert("Please upload files and enter a question.");
-      return;
+
+    // Check for necessary inputs
+    // if (!currentTab.chatId || !currentTab.question) {
+    //     alert("Please upload a file and enter a question.");
+    //     return;
+    // }
+
+    // Prepare the request payload
+    const requestPayload = {
+      chat_id: currentTab.chatId,
+      question: currentTab.question,
+      file_name: currentTab?.file?.name,
+      files: null, // Placeholder for file data
+    };
+
+    // Read the file as an ArrayBuffer if it exists
+    if (currentTab.file) {
+      const fileArrayBuffer = await currentTab.file.arrayBuffer();
+      requestPayload.files = Array.from(new Uint8Array(fileArrayBuffer)); // Convert to array for JSON serialization
     }
 
-    setChatMessage("");
     try {
-      const tempQuestion = currentTab.question;
-      setTabs((prevTabs) => {
-        const newTabs = [...prevTabs];
-        newTabs[tabIndex].question = ""; // Clear the question input
-        return newTabs;
-      });
-
-      const response = await fetch("http://localhost:8501/api/chat", {
+      const response = await fetch(environment.chatURL + "/chat", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json", // Set the appropriate content type
         },
-        body: JSON.stringify({
-          chat_id: currentTab.chatId,
-          question: tempQuestion,
-        }),
+        body: JSON.stringify(requestPayload), // Send the JSON payload
       });
+
       const data = await response.json();
+
       if (response.ok) {
+        // Extracting the assistant's response
+        const assistantMessage = data.response.output.message.content[0].text;
+        console.log("Assistant message: ", assistantMessage);
+
         setTabs((prevTabs) => {
           const newTabs = [...prevTabs];
-          newTabs[tabIndex] = {
-            ...newTabs[tabIndex],
-            messages: [
-              ...newTabs[tabIndex].messages,
-              { question: tempQuestion, response: data.response },
-            ],
-          };
+
+          if (currentTab.question.trim() === "") {
+            console.log("Empty question; not adding message.");
+            return newTabs; // No updates, just return the current state
+          }
+
+          // Check for duplicate messages
+          const messageExists = newTabs[tabIndex].messages.some(
+            (msg) =>
+              msg.question === currentTab.question &&
+              msg.response === assistantMessage
+          );
+
+          if (!messageExists) {
+            newTabs[tabIndex].messages.push({
+              question: currentTab.question,
+              response: assistantMessage,
+            });
+            console.log("new input: ", {
+              question: currentTab.question,
+              response: assistantMessage,
+            });
+          } else {
+            console.log("Duplicate message not added.");
+          }
+
+          // Clear question input and file
+          newTabs[tabIndex].question = ""; // Clear the question input
+          newTabs[tabIndex].file = null; // Clear the uploaded file after sending
+          setSelectedFile(null); // Clear the selected file in state
+          setLoading(false);
           return newTabs;
         });
+
         setChatMessage("Query processed successfully!");
       } else {
         setChatMessage(`Chat error: ${data.error}`);
@@ -139,11 +146,15 @@ const ChatsPage = () => {
     } catch (error) {
       setChatMessage(`Chat failed: ${error.message}`);
     }
+    setLoading(false);
   };
 
   const addTab = () => {
     if (tabs.length < 5) {
-      setTabs([...tabs, { chatId: "", files: [], messages: [], question: "" }]);
+      setTabs([
+        ...tabs,
+        { chatId: "", messages: [], question: "", file: null },
+      ]);
       setTabIndex(tabs.length);
     }
   };
@@ -155,6 +166,10 @@ const ChatsPage = () => {
       setTabIndex(index === 0 ? 0 : index - 1);
     }
   };
+
+  useEffect(() => {
+    console.log("messages: ", tabs[tabIndex].messages);
+  }, [tabs[tabIndex].messages.length]);
 
   return (
     <Container
@@ -188,61 +203,45 @@ const ChatsPage = () => {
 
         <TabPanels flex="1" overflowY="auto" mb={4}>
           {tabs.map((tab, index) => (
-            <TabPanel className="panel" key={index}  height={'400px'} overflowY={'scroll'} overflowX={'hidden'}>
+            <TabPanel
+              className="panel"
+              key={index}
+              height={"400px"}
+              overflowY={"scroll"}
+              overflowX={"hidden"}
+            >
               {/* File Upload Section */}
               <Box mb={4}>
-                {tab.files.length > 0 ? (
-                  <VStack align="stretch" spacing={2}>
-                    <Text fontWeight="bold">Uploaded Files:</Text>
-                    {tab.files.map((file, i) => (
-                      <Box
-                        key={i}
-                        p={2}
-                        bg="gray.100"
-                        borderRadius="md"
-                        boxShadow="sm"
-                      >
-                        {file.name}
-                      </Box>
-                    ))}
-                    <Button
-                      onClick={handleFileUpload}
-                      disabled={uploading}
-                      mt={2}
-                    >
-                      {uploading ? "Uploading..." : "Upload Files"}
-                    </Button>
-                  </VStack>
-                ) : (
-                  <Box
-                    border="2px dashed gray"
-                    height="150px"
+                <Box
+                  border="2px dashed gray"
+                  height="150px"
+                  width="100%"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  position="relative"
+                  borderRadius="md"
+                  cursor="pointer"
+                >
+                  <Input
+                    type="file"
+                    accept="*/*" // Allow all file types
+                    height="100%"
                     width="100%"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    position="relative"
-                    borderRadius="md"
+                    position="absolute"
+                    top="0"
+                    left="0"
+                    opacity="0"
                     cursor="pointer"
-                  >
-                    <Input
-                      type="file"
-                      multiple
-                      height="100%"
-                      width="100%"
-                      position="absolute"
-                      top="0"
-                      left="0"
-                      opacity="0"
-                      cursor="pointer"
-                      onChange={handleFileChange}
-                    />
-                    <Box textAlign="center">
-                      <Icon as={FiUpload} boxSize={8} />
-                      <Text mt={2}>Upload a file</Text>
-                    </Box>
+                    onChange={handleFileChange}
+                  />
+                  <Box textAlign="center">
+                    <Icon as={FiUpload} boxSize={8} />
+                    <Text mt={2}>
+                      {selectedFile ? selectedFile.name : "Upload a file"}
+                    </Text>
                   </Box>
-                )}
+                </Box>
                 {uploadMessage && <Text mt={2}>{uploadMessage}</Text>}
               </Box>
 
@@ -260,7 +259,8 @@ const ChatsPage = () => {
                         ml="auto"
                       >
                         <Text fontWeight="bold">You:</Text>
-                        <Text>{msg.question}</Text>
+                        <Text>{msg.question}</Text>{" "}
+                        {/* This should correctly display the question */}
                       </Box>
                       <Box
                         alignSelf="left"
@@ -271,7 +271,8 @@ const ChatsPage = () => {
                         mt={2}
                       >
                         <Text fontWeight="bold">Response:</Text>
-                        <Text>{msg.response || "No response yet"}</Text>
+                        <Text whiteSpace={'pre-line'}>{msg.response || "No response yet"}</Text>{" "}
+                        {/* Ensure response shows correctly */}
                       </Box>
                     </Box>
                   ))}
@@ -288,11 +289,13 @@ const ChatsPage = () => {
       {/* Input Area */}
       <Box as="footer" mt="auto" p={3} borderTop="1px solid gray">
         <HStack spacing={0}>
+        {loading ? <LoadingSpinner /> : null}
           <Input
-            value={tabs[tabIndex].question}
+            // value={tabs[tabIndex].question}
             onKeyDown={(e) => {
-              if (e.key === "Enter" && e.target.value !== "") {
+              if (e.key === "Enter" && e.target.value !== "" && !loading) {
                 handleChat();
+                e.target.value = ""
               }
             }}
             onChange={handleQuestionChange}
@@ -301,11 +304,10 @@ const ChatsPage = () => {
             mb={0}
           />
           <Button
+            colorScheme="blue"
             onClick={handleChat}
             borderRadius="0 md md 0"
-            bg="blue.500"
-            color="white"
-            _hover={{ bg: "blue.600" }}
+            disabled={loading}
           >
             <Icon as={FiSend} />
           </Button>
