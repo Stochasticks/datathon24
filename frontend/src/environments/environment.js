@@ -12,7 +12,7 @@ switch(process.env.NODE_ENV) {
 export const environment = {
 
     production: production,
-    serverUrl: `${production ? 'https://tbd:9000/api' : 'http://localhost:9000/api'}`,
+    serverUrl: `${production ? 'https://tbd:9000/api' : 'http://127.0.0.1:9999/api'}`,
     socketManagerUrl: `${production ? 'tbd:9000' : 'localhost:9000'}`,
     cosineSocketUrl:`${production ? 'tbd:9000' : 'localhost:9000'}`,
     lineSocketUrl:`${production ? 'tbd:8999' : 'localhost:8999'}`,

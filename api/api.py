@@ -1,6 +1,8 @@
+import json
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import os
+import pandas as pd
+import yfinance as yf
 import requests
 from dotenv import load_dotenv
 
@@ -43,6 +45,47 @@ def ticker_info():
     else:
         return jsonify({"error": f"Request failed with status code: {response.status_code}"}), response.status_code
 
+@app.route('/api/balance_sheet', methods=['GET'])
+def get_balance_sheet():
+    # Get the stock symbol from query parameters
+    stock_symbol = request.args.get('symbol')
+    if not stock_symbol:
+        return jsonify({"error": "No stock symbol provided"}), 400
+
+    try:
+        # Fetch the stock data
+        print('symbol:', stock_symbol)
+        stock = yf.Ticker(stock_symbol)
+        print('stock: ', stock)
+        
+        # Get the balance sheet
+        balance_sheet = stock.balance_sheet
+
+        # print('balance_sheet: ', balance_sheet)
+        
+        # Reset the index to make it a column
+        balance_sheet.reset_index(inplace=True)
+        
+        print("bb: ", balance_sheet)
+        # Convert the DataFrame to a list of dictionaries
+        balance_sheet_list = balance_sheet.to_dict(orient='records')
+
+        # Prepare the response data structure
+        response_data = {
+            "columns": list(balance_sheet.columns),  # Columns for React table
+            "data": balance_sheet_list  # Actual balance sheet data
+        }
+
+        print("response_data: ", response_data)
+
+        # Convert response data to JSON string
+        response_json = json.dumps(str(response_data).replace('Timestamp(', '').replace(')', ''))
+
+        # Return the response
+        return response_json, 200, {'Content-Type': 'application/json'}
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 load_ticker_dict()
 

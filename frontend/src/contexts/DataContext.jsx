@@ -40,6 +40,7 @@ export const DataProvider = ({ children }) => {
         let data;
         if (contentType && contentType.includes("application/json")) {
             data = await response.json();
+            console.log('json resp: ', data)
             if (data.body) {
                 data = JSON.parse(data.body)
             }

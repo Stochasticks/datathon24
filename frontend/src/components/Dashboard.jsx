@@ -39,6 +39,8 @@ import { TSNEScatter } from "./TSNEScatter";
 import StockSearchBar from "./DashboardStockSearch";
 import StockOverview from "./StockOverview";
 import { useDataContext } from "../contexts/DataContext";
+import Financials from "./Financials";
+import { environment } from "../environments/environment";
 
 // Sample data for the charts
 const data = [
@@ -74,6 +76,7 @@ const chartTypes = (props) => {
     // Cosine: <CosineMatrix width={300} height={150} />,
     // "t-SNE": <TSNEScatter width={300} height={150} />,
     Overview: <StockOverview symbol={props.symbol} width={300} height={150} />,
+    Financials: <Financials />,
     Sentiment: <div>dd</div>,
   };
 };
@@ -83,12 +86,12 @@ const Dashboard = () => {
   const [sections, setSections] = useState({
     "AAPL - Apple Inc": [
       { name: "Overview", chartType: "Overview", fullSize: true },
-      { name: "Financials", chartType: "Sentiment", fullSize: true },
+      { name: "Financials", chartType: "Financials", fullSize: true },
       { name: "Sentiment Analysis", chartType: "Sentiment", fullSize: true },
     ],
     "Company 1": [
       { name: "Overview", chartType: "Overview", fullSize: true },
-      { name: "Financials", chartType: "Sentiment", fullSize: true },
+      { name: "Financials", chartType: "Financials", fullSize: true },
       { name: "Sentiment Analysis", chartType: "Sentiment", fullSize: true },
     ]
   });
@@ -97,12 +100,15 @@ const Dashboard = () => {
 
   // Fetching all the data needed for a dashboard
   const fetchAllData = (symbol) => {
-    fetchData("assets", "https://u2et6buhf3.execute-api.us-west-2.amazonaws.com/ticker_info/tickerinfo?ticker=AAPL&metric=Assets");
+    if (symbol.startsWith('Company')) return;
+    console.log('symbol: ',symbol)
+    fetchData("assets", `https://u2et6buhf3.execute-api.us-west-2.amazonaws.com/ticker_info/tickerinfo?ticker=${symbol}&metric=Assets`);
+    fetchData("balanceSheet", `${environment.serverUrl}/balance_sheet?symbol=${symbol}`);
   }
   
   useEffect(() => {
-    fetchAllData('AAPL');
-  }, []);
+    fetchAllData(selectedSection.split('-')[0].trim());
+  }, [selectedSection]);
 
   // Function to add a new section without an initial name
   const addNewSection = () => {
@@ -173,7 +179,7 @@ const Dashboard = () => {
 
         updatedSections[value] = [
           { name: "Overview", chartType: "Overview", fullSize: true },
-          { name: "Financials", chartType: "Sentiment", fullSize: true },
+          { name: "Financials", chartType: "Financials", fullSize: true },
           {
             name: "Sentiment Analysis",
             chartType: "Sentiment",

@@ -129,7 +129,7 @@ const StockOverview = ({ symbol, width, height }) => {
         </LineChart>
       </div>
       {
-        JSON.stringify(state.assets, null, 2)
+        // JSON.stringify(state.assets, null, 2)
       }
     </div>
   );
