@@ -21,7 +21,7 @@ const Sentiments = (props) => {
         })
         .then((data) => {
           console.log(data);
-          const parsedResponse = JSON.parse(response.body);
+          const parsedResponse = JSON.parse(data.body);
           console.log(parsedResponse);    
           const finalData = JSON.parse(parsedResponse.message);
           console.log(finalData)
