@@ -87,6 +87,89 @@ def get_balance_sheet():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/api/income_statement', methods=['GET'])
+def get_income_statement():
+    # Get the stock symbol from query parameters
+    stock_symbol = request.args.get('symbol')
+    if not stock_symbol:
+        return jsonify({"error": "No stock symbol provided"}), 400
+
+    try:
+        # Fetch the stock data
+        print('symbol:', stock_symbol)
+        stock = yf.Ticker(stock_symbol)
+        print('stock: ', stock)
+        
+        # Get the income statement
+        income_statement = stock.financials
+
+        # Reset the index to make it a column
+        income_statement.reset_index(inplace=True)
+        
+        print("income_statement: ", income_statement)
+        
+        # Convert the DataFrame to a list of dictionaries
+        income_statement_list = income_statement.to_dict(orient='records')
+
+        # Prepare the response data structure
+        response_data = {
+            "columns": list(income_statement.columns),  # Columns for React table
+            "data": income_statement_list  # Actual income statement data
+        }
+
+        print("response_data: ", response_data)
+
+        # Convert response data to JSON string
+        response_json = json.dumps(str(response_data).replace('Timestamp(', '').replace(')', ''))
+
+        # Return the response
+        return response_json, 200, {'Content-Type': 'application/json'}
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/cash_flow_statement', methods=['GET'])
+def get_cash_flow_statement():
+    # Get the stock symbol from query parameters
+    stock_symbol = request.args.get('symbol')
+    if not stock_symbol:
+        return jsonify({"error": "No stock symbol provided"}), 400
+
+    try:
+        # Fetch the stock data
+        print('symbol:', stock_symbol)
+        stock = yf.Ticker(stock_symbol)
+        print('stock: ', stock)
+        
+        # Get the cash flow statement
+        cash_flow_statement = stock.cashflow
+
+        # Reset the index to make it a column
+        cash_flow_statement.reset_index(inplace=True)
+        
+        print("cash_flow_statement: ", cash_flow_statement)
+        
+        # Convert the DataFrame to a list of dictionaries
+        cash_flow_statement_list = cash_flow_statement.to_dict(orient='records')
+
+        # Prepare the response data structure
+        response_data = {
+            "columns": list(cash_flow_statement.columns),  # Columns for React table
+            "data": cash_flow_statement_list  # Actual cash flow statement data
+        }
+
+        print("response_data: ", response_data)
+
+        # Convert response data to JSON string
+        response_json = json.dumps(str(response_data).replace('Timestamp(', '').replace(')', ''))
+
+        # Return the response
+        return response_json, 200, {'Content-Type': 'application/json'}
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 load_ticker_dict()
 
 if __name__ == '__main__':

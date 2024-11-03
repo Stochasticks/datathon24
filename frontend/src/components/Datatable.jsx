@@ -20,7 +20,7 @@ import {
 //   ]
 // };
 
-const DataTable = ({tableData}) => {
+const DataTable = ({tableData, statementType}) => {
   // Currency formatter function
   const formatCurrency = (value) => {
     // Only format numbers, return strings as they are
@@ -36,13 +36,25 @@ const DataTable = ({tableData}) => {
     return value; // Return the value as is for non-numeric types
   };
 
+  const getTitle = () => {
+    if (statementType === 'balanceSheet') {
+        return 'Balance Sheet';
+    } else if (statementType === 'incomeStatement') {
+        return 'Income Statement';
+    } else if (statementType === 'cashFlowStatement') {
+        return 'Cash Flow Statement';
+    } else {
+        return 'Balance Sheet';
+    }
+  }
+
   useEffect(() => {
     console.log('table data is: ', tableData)
   }, [tableData])
 
   return (
     <Box p={4}>
-      <Text fontSize="2xl" mb={4}>Financial Data Table - USD</Text>
+      <Text fontSize="2xl" mb={4}>{getTitle(statementType)} - USD</Text>
       <Table variant="simple" colorScheme="black">
         <Thead>
           <Tr>

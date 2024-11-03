@@ -104,6 +104,8 @@ const Dashboard = () => {
     console.log('symbol: ',symbol)
     fetchData("assets", `https://u2et6buhf3.execute-api.us-west-2.amazonaws.com/ticker_info/tickerinfo?ticker=${symbol}&metric=Assets`);
     fetchData("balanceSheet", `${environment.serverUrl}/balance_sheet?symbol=${symbol}`);
+    fetchData("incomeStatement", `${environment.serverUrl}/income_statement?symbol=${symbol}`);
+    fetchData("cashFlowStatement", `${environment.serverUrl}/cash_flow_statement?symbol=${symbol}`);
   }
   
   useEffect(() => {
