@@ -33,13 +33,11 @@ import {
 } from "recharts";
 import DashboardSidebar from "./DashboardSidebar";
 import DashboardSectionHeader from "./DashboardSectionHeader";
-import { LineGraph } from "./LineGraph";
-import CosineMatrix from "./CosineMatrix";
-import { TSNEScatter } from "./TSNEScatter";
 import StockSearchBar from "./DashboardStockSearch";
 import StockOverview from "./StockOverview";
 import { useDataContext } from "../contexts/DataContext";
 import Financials from "./Financials";
+import Sentiments from "./Sentiments";
 import { environment } from "../environments/environment";
 import ConfigButton from "./ConfigButton";
 import { FaMessage } from "react-icons/fa6";
@@ -75,12 +73,9 @@ const chartTypes = (props) => {
         <Bar dataKey="pv" fill="#8884d8" />
       </BarChart>
     ),
-    // Quotes: <LineGraph width={300} height={150} />,
-    // Cosine: <CosineMatrix width={300} height={150} />,
-    // "t-SNE": <TSNEScatter width={300} height={150} />,
     Overview: <StockOverview symbol={props.symbol} width={300} height={150} />,
     Financials: <Financials />,
-    Sentiment: <div>dd</div>,
+    Sentiment: <Sentiments symbol={props.symbol} />,
   };
 };
 
