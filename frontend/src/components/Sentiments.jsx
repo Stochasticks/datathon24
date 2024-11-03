@@ -21,7 +21,7 @@ const Sentiments = (props) => {
         })
         .then((data) => {
           console.log(data);
-          parsedResponse = JSON.parse(mock_response.body);
+          const parsedResponse = JSON.parse(response.body);
           const finalData = JSON.parse(parsedResponse.message);
           setData(finalData);
         })
