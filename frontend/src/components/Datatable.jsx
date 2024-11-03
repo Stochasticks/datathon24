@@ -49,7 +49,7 @@ const DataTable = ({tableData, statementType}) => {
   }
 
   useEffect(() => {
-    console.log('table data is: ', tableData)
+    // console.log('table data is: ', tableData)
   }, [tableData])
 
   return (

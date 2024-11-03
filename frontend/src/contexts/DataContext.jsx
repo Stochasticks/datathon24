@@ -40,7 +40,7 @@ export const DataProvider = ({ children }) => {
         let data;
         if (contentType && contentType.includes("application/json")) {
             data = await response.json();
-            console.log('json resp: ', data)
+            // console.log('json resp: ', data)
             if (data.body) {
                 data = JSON.parse(data.body)
             }
@@ -48,7 +48,7 @@ export const DataProvider = ({ children }) => {
             data = await response.text(); // For debugging non-JSON responses
         }
 
-        console.log('response data:', data);
+        // console.log('response data:', data);
         dispatch({ type: "SET_DATA", key, data });
     } catch (error) {
         console.error("Error fetching data:", error);

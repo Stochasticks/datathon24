@@ -12,11 +12,11 @@ import { Button, ButtonGroup } from "@chakra-ui/react"; // For Chakra UI
 
 import axios from "axios";
 import { useDataContext } from "../contexts/DataContext";
+import OverviewDetails from "./OverviewDetails";
 
 const StockOverview = ({ symbol, width, height }) => {
   const [data, setData] = useState([]);
   const [timeframe, setTimeframe] = useState("1month"); // Default timeframe set to 1 month
-  const { state } = useDataContext();
 
   useEffect(() => {
     const fetchHistoricalData = async () => {
@@ -129,7 +129,7 @@ const StockOverview = ({ symbol, width, height }) => {
         </LineChart>
       </div>
       {
-        // JSON.stringify(state.assets, null, 2)
+        <OverviewDetails />
       }
     </div>
   );

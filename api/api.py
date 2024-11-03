@@ -169,6 +169,56 @@ def get_cash_flow_statement():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/api/financial_ratios', methods=['GET'])
+def get_financial_ratios():
+    # Get the stock symbol from query parameters
+    stock_symbol = request.args.get('symbol')
+    if not stock_symbol:
+        return jsonify({"error": "No stock symbol provided"}), 400
+
+    try:
+        # Fetch the stock data
+        stock = yf.Ticker(stock_symbol)
+        
+        # Get financial ratios (from `info` dictionary)
+        info = stock.info
+        ratios = {
+            "marketCap": info.get("marketCap"),
+            "volume": info.get("volume"),
+            "dividendYield": info.get("dividendYield"),
+            "priceToEarnings": info.get("trailingPE"),
+            "priceToBook": info.get("priceToBook"),
+            "debtToEquity": info.get("debtToEquity"),
+            "returnOnEquity": info.get("returnOnEquity"),
+            "currentRatio": info.get("currentRatio"),
+            "quickRatio": info.get("quickRatio"),
+            "grossMargins": info.get("grossMargins"),
+            "operatingMargins": info.get("operatingMargins"),
+            "profitMargins": info.get("profitMargins"),
+        }
+
+        # Filter out None values while keeping the same declared order
+        ratios = {k: v for k, v in ratios.items() if v is not None}
+
+        print('ratios.items(): ', ratios.items())
+
+        # Prepare the response data structure
+        response_data = {
+            "symbol": stock_symbol,
+            "ratios": ratios
+        }
+
+        # Return the response
+        # return json.dumps(response_data), 200
+        # return jsonify(response_data), 200
+        response_json = json.dumps(response_data, ensure_ascii=False)
+        response = app.response_class(
+            response=response_json,
+            mimetype='application/json'
+        )
+        return response, 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 load_ticker_dict()
 

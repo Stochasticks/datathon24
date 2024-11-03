@@ -14,7 +14,7 @@ const Financials = () => {
       const formated = state[statementType]
         ?.replace(/'/g, '"')
         .replace(/nan/g, "null");
-      console.log("in financials: ", formated);
+    //   console.log("in financials: ", formated);
 
       setData(JSON.parse(formated));
     } else {
