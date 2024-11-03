@@ -20,8 +20,9 @@ const Sentiments = (props) => {
           return response.json();
         })
         .then((output) => {
+         console.log(output.body);
          const parsedResponse = JSON.parse(output.body);
-         const new_data = parsedResponse.message[0];
+         const new_data = parsedResponse.message;
          console.log(new_data);
          setData(new_data);
         })
