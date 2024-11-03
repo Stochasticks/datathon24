@@ -1,11 +1,30 @@
-import { Button, Container, Heading, Input, Box, Text, Icon, VStack, HStack, Tabs, TabList, TabPanels, Tab, TabPanel, CloseButton } from "@chakra-ui/react";
+import {
+  Button,
+  Container,
+  Heading,
+  Input,
+  Box,
+  Text,
+  Icon,
+  VStack,
+  HStack,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
+  CloseButton,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import React, { useState, useRef, useEffect } from "react";
-import { FiUpload, FiSend } from 'react-icons/fi';
+import { FiUpload, FiSend } from "react-icons/fi";
 
 const ChatsPage = () => {
   const [files, setFiles] = useState([]);
   const [tabIndex, setTabIndex] = useState(0);
-  const [tabs, setTabs] = useState([{ chatId: "", files: [], messages: [], question: "" }]);
+  const [tabs, setTabs] = useState([
+    { chatId: "", files: [], messages: [], question: "" },
+  ]);
   const [uploading, setUploading] = useState(false);
   const [uploadMessage, setUploadMessage] = useState("");
   const [chatMessage, setChatMessage] = useState("");
@@ -80,7 +99,7 @@ const ChatsPage = () => {
       alert("Please upload files and enter a question.");
       return;
     }
-  
+
     setChatMessage("");
     try {
       const tempQuestion = currentTab.question;
@@ -89,7 +108,7 @@ const ChatsPage = () => {
         newTabs[tabIndex].question = ""; // Clear the question input
         return newTabs;
       });
-  
+
       const response = await fetch("http://localhost:8501/api/chat", {
         method: "POST",
         headers: {
@@ -103,16 +122,16 @@ const ChatsPage = () => {
       const data = await response.json();
       if (response.ok) {
         setTabs((prevTabs) => {
-            const newTabs = [...prevTabs];
-            newTabs[tabIndex] = {
-              ...newTabs[tabIndex],
-              messages: [
-                ...newTabs[tabIndex].messages,
-                { question: tempQuestion, response: data.response }
-              ],
-            };
-            return newTabs;
-          });
+          const newTabs = [...prevTabs];
+          newTabs[tabIndex] = {
+            ...newTabs[tabIndex],
+            messages: [
+              ...newTabs[tabIndex].messages,
+              { question: tempQuestion, response: data.response },
+            ],
+          };
+          return newTabs;
+        });
         setChatMessage("Query processed successfully!");
       } else {
         setChatMessage(`Chat error: ${data.error}`);
@@ -121,7 +140,6 @@ const ChatsPage = () => {
       setChatMessage(`Chat failed: ${error.message}`);
     }
   };
-  
 
   const addTab = () => {
     if (tabs.length < 5) {
@@ -139,18 +157,23 @@ const ChatsPage = () => {
   };
 
   return (
-    <Container display="flex" flexDirection="column" height="80vh" maxW="container.lg">
+    <Container
+      display="flex"
+      flexDirection="column"
+      height="70vh"
+      width={"80vw"}
+      maxW="container.lg"
+      backgroundColor={useColorModeValue("white", "gray.800")}
+    >
       <Heading as="h1" textAlign="center" mb={4}>
-        Website Chatter
+        How can I help you?
       </Heading>
 
       <Tabs index={tabIndex} onChange={setTabIndex} variant="enclosed" isFitted>
         <TabList>
           {tabs.map((tab, index) => (
             <HStack key={index} spacing={1}>
-              <Tab>
-                Chat # {index + 1}
-              </Tab>
+              <Tab>Chat # {index + 1}</Tab>
               {tabs.length > 1 && (
                 <CloseButton onClick={() => removeTab(index)} />
               )}
@@ -165,94 +188,97 @@ const ChatsPage = () => {
 
         <TabPanels flex="1" overflowY="auto" mb={4}>
           {tabs.map((tab, index) => (
-            <TabPanel className="panel" key={index}>
-            {/* File Upload Section */}
-            <Box mb={4}>
-              {tab.files.length > 0 ? (
-                <VStack align="stretch" spacing={2}>
-                  <Text fontWeight="bold">Uploaded Files:</Text>
-                  {tab.files.map((file, i) => (
-                    <Box
-                      key={i}
-                      p={2}
-                      bg="gray.100"
-                      borderRadius="md"
-                      boxShadow="sm"
-                    >
-                      {file.name}
-                    </Box>
-                  ))}
-                  <Button onClick={handleFileUpload} disabled={uploading} mt={2}>
-                    {uploading ? "Uploading..." : "Upload Files"}
-                  </Button>
-                </VStack>
-              ) : (
-                <Box
-                  border="2px dashed gray"
-                  height="150px"
-                  width="100%"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  position="relative"
-                  borderRadius="md"
-                  cursor="pointer"
-                >
-                  <Input
-                    type="file"
-                    multiple
-                    height="100%"
-                    width="100%"
-                    position="absolute"
-                    top="0"
-                    left="0"
-                    opacity="0"
-                    cursor="pointer"
-                    onChange={handleFileChange}
-                  />
-                  <Box textAlign="center">
-                    <Icon as={FiUpload} boxSize={8} />
-                    <Text mt={2}>Upload a file</Text>
-                  </Box>
-                </Box>
-              )}
-              {uploadMessage && <Text mt={2}>{uploadMessage}</Text>}
-            </Box>
-          
-            {/* Chat Messages Section */}
-            <Box flex="1" overflowY="auto" mb={4}>
-              <VStack align="stretch" spacing={3}>
-                {tab.messages.map((msg, i) => (
-                  <Box key={i}>
-                    <Box
-                      alignSelf="flex-end"
-                      bg="blue.100"
-                      p={3}
-                      borderRadius="md"
-                      maxW="70%"
-                      ml="auto"
-                    >
-                      <Text fontWeight="bold">You:</Text>
-                      <Text>{msg.question}</Text>
-                    </Box>
-                    <Box
-                      alignSelf="left"
-                      p={3}
-                      borderRadius="md"
-                      maxW="70%"
-                      textAlign="left"
+            <TabPanel className="panel" key={index}  height={'400px'} overflowY={'scroll'} overflowX={'hidden'}>
+              {/* File Upload Section */}
+              <Box mb={4}>
+                {tab.files.length > 0 ? (
+                  <VStack align="stretch" spacing={2}>
+                    <Text fontWeight="bold">Uploaded Files:</Text>
+                    {tab.files.map((file, i) => (
+                      <Box
+                        key={i}
+                        p={2}
+                        bg="gray.100"
+                        borderRadius="md"
+                        boxShadow="sm"
+                      >
+                        {file.name}
+                      </Box>
+                    ))}
+                    <Button
+                      onClick={handleFileUpload}
+                      disabled={uploading}
                       mt={2}
                     >
-                      <Text fontWeight="bold">Response:</Text>
-                      <Text>{msg.response || "No response yet"}</Text>
+                      {uploading ? "Uploading..." : "Upload Files"}
+                    </Button>
+                  </VStack>
+                ) : (
+                  <Box
+                    border="2px dashed gray"
+                    height="150px"
+                    width="100%"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    position="relative"
+                    borderRadius="md"
+                    cursor="pointer"
+                  >
+                    <Input
+                      type="file"
+                      multiple
+                      height="100%"
+                      width="100%"
+                      position="absolute"
+                      top="0"
+                      left="0"
+                      opacity="0"
+                      cursor="pointer"
+                      onChange={handleFileChange}
+                    />
+                    <Box textAlign="center">
+                      <Icon as={FiUpload} boxSize={8} />
+                      <Text mt={2}>Upload a file</Text>
                     </Box>
                   </Box>
-                ))}
-                <div ref={messagesEndRef} />
-              </VStack>
-            </Box>
-          </TabPanel>
-          
+                )}
+                {uploadMessage && <Text mt={2}>{uploadMessage}</Text>}
+              </Box>
+
+              {/* Chat Messages Section */}
+              <Box flex="1" overflowY="auto" mb={4}>
+                <VStack align="stretch" spacing={3}>
+                  {tab.messages.map((msg, i) => (
+                    <Box key={i}>
+                      <Box
+                        alignSelf="flex-end"
+                        bg="blue.100"
+                        p={3}
+                        borderRadius="md"
+                        maxW="70%"
+                        ml="auto"
+                      >
+                        <Text fontWeight="bold">You:</Text>
+                        <Text>{msg.question}</Text>
+                      </Box>
+                      <Box
+                        alignSelf="left"
+                        p={3}
+                        borderRadius="md"
+                        maxW="70%"
+                        textAlign="left"
+                        mt={2}
+                      >
+                        <Text fontWeight="bold">Response:</Text>
+                        <Text>{msg.response || "No response yet"}</Text>
+                      </Box>
+                    </Box>
+                  ))}
+                  <div ref={messagesEndRef} />
+                </VStack>
+              </Box>
+            </TabPanel>
           ))}
         </TabPanels>
       </Tabs>

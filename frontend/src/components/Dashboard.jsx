@@ -41,6 +41,9 @@ import StockOverview from "./StockOverview";
 import { useDataContext } from "../contexts/DataContext";
 import Financials from "./Financials";
 import { environment } from "../environments/environment";
+import ConfigButton from "./ConfigButton";
+import { FaMessage } from "react-icons/fa6";
+import ChatsPage from "../ChatsPage";
 
 // Sample data for the charts
 const data = [
@@ -93,24 +96,39 @@ const Dashboard = () => {
       { name: "Overview", chartType: "Overview", fullSize: true },
       { name: "Financials", chartType: "Financials", fullSize: true },
       { name: "Sentiment Analysis", chartType: "Sentiment", fullSize: true },
-    ]
+    ],
   });
   const [newSectionName, setNewSectionName] = useState("");
   const { state, fetchData } = useDataContext();
 
   // Fetching all the data needed for a dashboard
   const fetchAllData = (symbol) => {
-    if (symbol.startsWith('Company')) return;
-    console.log('symbol: ',symbol)
-    fetchData("assets", `https://u2et6buhf3.execute-api.us-west-2.amazonaws.com/ticker_info/tickerinfo?ticker=${symbol}&metric=Assets`);
-    fetchData("balanceSheet", `${environment.serverUrl}/balance_sheet?symbol=${symbol}`);
-    fetchData("incomeStatement", `${environment.serverUrl}/income_statement?symbol=${symbol}`);
-    fetchData("cashFlowStatement", `${environment.serverUrl}/cash_flow_statement?symbol=${symbol}`);
-    fetchData("ratios", `${environment.serverUrl}/financial_ratios?symbol=${symbol}`);
-  }
-  
+    if (symbol.startsWith("Company")) return;
+    console.log("symbol: ", symbol);
+    fetchData(
+      "assets",
+      `https://u2et6buhf3.execute-api.us-west-2.amazonaws.com/ticker_info/tickerinfo?ticker=${symbol}&metric=Assets`
+    );
+    fetchData(
+      "balanceSheet",
+      `${environment.serverUrl}/balance_sheet?symbol=${symbol}`
+    );
+    fetchData(
+      "incomeStatement",
+      `${environment.serverUrl}/income_statement?symbol=${symbol}`
+    );
+    fetchData(
+      "cashFlowStatement",
+      `${environment.serverUrl}/cash_flow_statement?symbol=${symbol}`
+    );
+    fetchData(
+      "ratios",
+      `${environment.serverUrl}/financial_ratios?symbol=${symbol}`
+    );
+  };
+
   useEffect(() => {
-    fetchAllData(selectedSection.split('-')[0].trim());
+    fetchAllData(selectedSection.split("-")[0].trim());
   }, [selectedSection]);
 
   // Function to add a new section without an initial name
@@ -212,7 +230,19 @@ const Dashboard = () => {
           addNewSection={addNewSection}
           sections={Object.keys(sections)}
         />
-
+        {/* Chatbot access */}
+        <Box position={"absolute"} bottom={8} right={20} zIndex={999}>
+          <ConfigButton
+            type={"normal"}
+            noFooter={true}
+            buttonText="OpenTicks"
+            buttonIcon={<FaMessage />}
+            modalTitle=""
+            modalContent={<ChatsPage />}
+            width="fit-content"
+            height="fit-content"
+          />
+        </Box>
         {/* Main content area */}
         <Box flex="1" p="4">
           <DashboardSectionHeader title={selectedSection} />
