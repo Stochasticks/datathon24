@@ -22,10 +22,8 @@ const Sentiments = (props) => {
         .then((data) => {
           console.log(data);
           const parsedResponse = JSON.parse(data.body);
-          console.log(parsedResponse);    
-          const finalData = JSON.parse(parsedResponse.message);
-          console.log(finalData)
-          setData(finalData);
+          console.log(parsedResponse.message);    
+          setData(parsedResponse.message);
         })
         .catch((error) => {
           console.error("Error fetching data:", error);
