@@ -1,11 +1,22 @@
-from chalice import Chalice, Response
+from chalice import Chalice, Response, CORSConfig
 from chalicelib.bedrock_service import BedrockService
 
 app = Chalice(app_name='openticks')
 bedrock_service = BedrockService(region_name='us-west-2')
 
 
-@app.route('/api/chat', methods=['POST'], cors=True)
+cors_config = CORSConfig(
+    allow_origin="*",
+    # allow_credentials=True,
+    allow_headers = ["Content-Type", "X-Special-Header"],
+    # allow_methods = ["POST", "GET", "OPTIONS"],
+)
+
+# @app.route('/')
+# def index():
+#     return {'hello': 'world'}
+
+@app.route('/chat', methods=['POST'], cors=cors_config)
 def chat_with_document():
     request = app.current_request
     # print(f"Request Headers: {request.headers}")

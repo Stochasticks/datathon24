@@ -210,41 +210,6 @@ const ChatsPage = () => {
               overflowY={"scroll"}
               overflowX={"hidden"}
             >
-              {/* File Upload Section */}
-              <Box mb={4}>
-                <Box
-                  border="2px dashed gray"
-                  height="150px"
-                  width="100%"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  position="relative"
-                  borderRadius="md"
-                  cursor="pointer"
-                >
-                  <Input
-                    type="file"
-                    accept="*/*" // Allow all file types
-                    height="100%"
-                    width="100%"
-                    position="absolute"
-                    top="0"
-                    left="0"
-                    opacity="0"
-                    cursor="pointer"
-                    onChange={handleFileChange}
-                  />
-                  <Box textAlign="center">
-                    <Icon as={FiUpload} boxSize={8} />
-                    <Text mt={2}>
-                      {selectedFile ? selectedFile.name : "Upload a file"}
-                    </Text>
-                  </Box>
-                </Box>
-                {uploadMessage && <Text mt={2}>{uploadMessage}</Text>}
-              </Box>
-
               {/* Chat Messages Section */}
               <Box flex="1" overflowY="auto" mb={4}>
                 <VStack align="stretch" spacing={3}>
@@ -271,7 +236,9 @@ const ChatsPage = () => {
                         mt={2}
                       >
                         <Text fontWeight="bold">Response:</Text>
-                        <Text whiteSpace={'pre-line'}>{msg.response || "No response yet"}</Text>{" "}
+                        <Text whiteSpace={"pre-line"}>
+                          {msg.response || "No response yet"}
+                        </Text>{" "}
                         {/* Ensure response shows correctly */}
                       </Box>
                     </Box>
@@ -285,17 +252,48 @@ const ChatsPage = () => {
       </Tabs>
 
       {chatMessage && <Text mt={2}>{chatMessage}</Text>}
-
+{/* File name display area */}
+{selectedFile && (
+        <Box
+          bg="gray.100"
+          borderRadius="md"
+          p={2}
+          mb={3}
+          textAlign="center"
+          border="1px solid gray"
+        >
+          {selectedFile.name}
+        </Box>
+      )}
       {/* Input Area */}
       <Box as="footer" mt="auto" p={3} borderTop="1px solid gray">
-        <HStack spacing={0}>
-        {loading ? <LoadingSpinner /> : null}
+        <HStack spacing={3}>
+          {loading ? <LoadingSpinner /> : null}
+
+          {/* File Upload Area */}
+          <Button
+            colorScheme="blue"
+            variant={'outline'}
+          >
+            <Input
+              type="file"
+              accept="*/*" // Allow all file types
+              position="absolute"
+              top="0"
+              left="0"
+              opacity="0"
+              cursor="pointer"
+              onChange={handleFileChange}
+            />
+            <Box textAlign="center">
+              <Icon as={FiUpload} boxSize={8} />
+            </Box>
+          </Button>
           <Input
-            // value={tabs[tabIndex].question}
             onKeyDown={(e) => {
               if (e.key === "Enter" && e.target.value !== "" && !loading) {
                 handleChat();
-                e.target.value = ""
+                e.target.value = "";
               }
             }}
             onChange={handleQuestionChange}
@@ -312,6 +310,7 @@ const ChatsPage = () => {
             <Icon as={FiSend} />
           </Button>
         </HStack>
+        {uploadMessage && <Text mt={2}>{uploadMessage}</Text>}
       </Box>
     </Container>
   );
