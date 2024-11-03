@@ -23,8 +23,12 @@ const Sentiments = (props) => {
          console.log(output.body);
          const parsedResponse = JSON.parse(output.body);
          const new_data = parsedResponse.message;
-         console.log(new_data);
-         setData(new_data);
+         new_data = new_data.replace(/'/g, '"');
+         const finalData = JSON.parse(new_data);
+         console.log(finalData);
+         console.log(finalData[0]);     
+ 
+        setData(finalData[0]); 
         })
         .catch((error) => {
           console.error("Error fetching data:", error);
