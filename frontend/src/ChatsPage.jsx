@@ -19,6 +19,7 @@ import {
 import React, { useState, useRef, useEffect } from "react";
 import { FiUpload, FiSend } from "react-icons/fi";
 import { environment } from "./environments/environment";
+import LoadingSpinner from "./components/LoadingSpinner";
 
 const ChatsPage = () => {
   const [tabIndex, setTabIndex] = useState(0);
@@ -28,6 +29,7 @@ const ChatsPage = () => {
   const [uploadMessage, setUploadMessage] = useState("");
   const [chatMessage, setChatMessage] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const messagesEndRef = useRef(null);
 
@@ -62,6 +64,7 @@ const ChatsPage = () => {
 
   const handleChat = async () => {
     console.log("entered ");
+    setLoading(true);
     const currentTab = tabs[tabIndex];
 
     // Check for necessary inputs
@@ -132,6 +135,7 @@ const ChatsPage = () => {
           newTabs[tabIndex].question = ""; // Clear the question input
           newTabs[tabIndex].file = null; // Clear the uploaded file after sending
           setSelectedFile(null); // Clear the selected file in state
+          setLoading(false);
           return newTabs;
         });
 
@@ -142,6 +146,7 @@ const ChatsPage = () => {
     } catch (error) {
       setChatMessage(`Chat failed: ${error.message}`);
     }
+    setLoading(false);
   };
 
   const addTab = () => {
@@ -266,7 +271,7 @@ const ChatsPage = () => {
                         mt={2}
                       >
                         <Text fontWeight="bold">Response:</Text>
-                        <Text>{msg.response || "No response yet"}</Text>{" "}
+                        <Text whiteSpace={'pre-line'}>{msg.response || "No response yet"}</Text>{" "}
                         {/* Ensure response shows correctly */}
                       </Box>
                     </Box>
@@ -284,11 +289,13 @@ const ChatsPage = () => {
       {/* Input Area */}
       <Box as="footer" mt="auto" p={3} borderTop="1px solid gray">
         <HStack spacing={0}>
+        {loading ? <LoadingSpinner /> : null}
           <Input
-            value={tabs[tabIndex].question}
+            // value={tabs[tabIndex].question}
             onKeyDown={(e) => {
-              if (e.key === "Enter" && e.target.value !== "") {
+              if (e.key === "Enter" && e.target.value !== "" && !loading) {
                 handleChat();
+                e.target.value = ""
               }
             }}
             onChange={handleQuestionChange}
@@ -300,6 +307,7 @@ const ChatsPage = () => {
             colorScheme="blue"
             onClick={handleChat}
             borderRadius="0 md md 0"
+            disabled={loading}
           >
             <Icon as={FiSend} />
           </Button>
