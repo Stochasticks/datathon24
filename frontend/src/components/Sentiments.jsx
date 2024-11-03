@@ -22,7 +22,7 @@ const Sentiments = (props) => {
         .then((output) => {
          console.log(output.body);
          const parsedResponse = JSON.parse(output.body);
-         const new_data = parsedResponse.message;
+         let new_data = parsedResponse.message;
          new_data = new_data.replace(/'/g, '"');
          const finalData = JSON.parse(new_data);
          console.log(finalData);
