@@ -38,6 +38,7 @@ const tipranksEnumDictionary = {
     "Hold":  "Hold",
     "ModerateSell": "Moderate Sell" ,
     "Sell":  "Sell" ,
+    "N/A": "N/A"
   },
 
   bloggerConsensus: {
