@@ -113,7 +113,7 @@ const OverviewDetails = () => {
             ))}
           <Box
             height={"200px"}
-            width={"200px"}
+            width={"100%"}
             bg={bg}
             padding={2}
             borderRadius="lg"
