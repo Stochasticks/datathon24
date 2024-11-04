@@ -111,7 +111,7 @@ const ChatsPage = () => {
 
       if (response.ok) {
         // Extracting the assistant's response
-        const assistantMessage = data.response.output.message.content[0].text;
+        const assistantMessage = data.response.output_text;
         console.log("Assistant message: ", assistantMessage);
 
         setTabs((prevTabs) => {
