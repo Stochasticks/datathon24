@@ -51,7 +51,6 @@ const ChatsPage = () => {
   }, [tabs[tabIndex]?.messages]);
 
   const handleFileChange = (e) => {
-    console.log("files: ", e.target.files[0]);
     const file = e.target.files[0]; // Only one file for simplicity
     if (file) {
       setSelectedFile(file);
@@ -83,7 +82,6 @@ const ChatsPage = () => {
   }
 
   const handleChat = async () => {
-    console.log("entered ");
     setLoading(true);
     const currentTab = tabs[tabIndex];
 
@@ -131,7 +129,6 @@ const ChatsPage = () => {
       if (response.ok) {
         // Extracting the assistant's response
         const assistantMessage = data.response.output_text;
-        console.log("Assistant message: ", assistantMessage);
 
         setTabs((prevTabs) => {
           const newTabs = [...prevTabs];
@@ -150,10 +147,6 @@ const ChatsPage = () => {
 
           if (!messageExists) {
             newTabs[tabIndex].messages.push({
-              question: currentTab.question,
-              response: assistantMessage,
-            });
-            console.log("new input: ", {
               question: currentTab.question,
               response: assistantMessage,
             });
@@ -216,10 +209,6 @@ const ChatsPage = () => {
       handleTabFile();
     }
   };
-
-  useEffect(() => {
-    console.log("messages: ", tabs[tabIndex].messages);
-  }, [tabs[tabIndex].messages.length]);
 
   return (
     <Container

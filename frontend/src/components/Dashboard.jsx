@@ -42,6 +42,7 @@ import { environment } from "../environments/environment";
 import ConfigButton from "./ConfigButton";
 import { FaMessage } from "react-icons/fa6";
 import ChatsPage from "../ChatsPage";
+import { saveAs } from 'file-saver';
 
 // Sample data for the charts
 const data = [
@@ -216,6 +217,13 @@ const Dashboard = () => {
     setSelectedSection(Object.keys(sections)[0]);
   }, []);
 
+  const handleDownload = (dataType) => {
+    const fileName = `${dataType}_data.json`; // You can change this to the desired format
+    const dataToDownload = JSON.stringify(state[dataType]); // Adjust according to how you store your data
+    const blob = new Blob([dataToDownload], { type: 'application/json' });
+    saveAs(blob, fileName);
+  };
+
   return (
     <ChakraProvider>
       <Flex height="100vh">
@@ -288,38 +296,43 @@ const Dashboard = () => {
                       ({ chartType, fullSize }, idx) => (
                         <TabPanel key={`${sectionKey}-${idx}`}>
                           <Flex justify="space-between" mb="4">
-                            <Text fontSize="lg">Chart {idx + 1}</Text>
+                            <Text fontSize="lg"></Text>
                             <HStack spacing="4">
-                              {/* Toggle chart size button */}
-                              <Button
-                                size="sm"
-                                onClick={() => toggleChartSize(sectionKey, idx)}
-                              >
-                                {fullSize ? "Default Size" : "Full Size"}
-                              </Button>
-
-                              {/* Chart type selector */}
                               <Menu>
                                 <MenuButton
                                   as={Button}
                                   size="sm"
                                   rightIcon={<ChevronDownIcon />}
                                 >
-                                  {chartType
-                                    ? `${chartType} Chart`
-                                    : "Select Chart"}
+                                  Download Data
                                 </MenuButton>
                                 <MenuList>
-                                  {Object.keys(chartTypes({})).map((type) => (
-                                    <MenuItem
-                                      key={type}
-                                      onClick={() =>
-                                        setChartType(sectionKey, idx, type)
-                                      }
-                                    >
-                                      {type} Chart
-                                    </MenuItem>
-                                  ))}
+                                  <MenuItem
+                                    onClick={() =>
+                                      handleDownload("balanceSheet")
+                                    }
+                                  >
+                                    Download Balance Sheet
+                                  </MenuItem>
+                                  <MenuItem
+                                    onClick={() =>
+                                      handleDownload("incomeStatement")
+                                    }
+                                  >
+                                    Download Income Statement
+                                  </MenuItem>
+                                  <MenuItem
+                                    onClick={() =>
+                                      handleDownload("cashFlowStatement")
+                                    }
+                                  >
+                                    Download Cash Flow Statement
+                                  </MenuItem>
+                                  <MenuItem
+                                    onClick={() => handleDownload("ratios")}
+                                  >
+                                    Download Financial Ratios
+                                  </MenuItem>
                                 </MenuList>
                               </Menu>
                             </HStack>
@@ -332,9 +345,7 @@ const Dashboard = () => {
                             rounded="md"
                             shadow="md"
                           >
-                            {/* {renderChart(chartType, fullSize, `${chartType}-${fullSize}`)} */}
                             {renderChart(chartType, fullSize)}
-                            <Text>Test Chart sub-section</Text>
                           </Box>
                         </TabPanel>
                       )

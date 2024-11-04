@@ -38,6 +38,7 @@
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "axios": "^1.7.5",
+    "file-saver": "^2.0.5",
     "framer-motion": "^11.11.10",
     "lightweight-charts": "^4.2.0",
     "react": "^18.2.0",

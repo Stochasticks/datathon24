@@ -127,21 +127,6 @@ const Dashboard = () => {
       <Text>Add a chart</Text>
     );
 
-  // const renderChart = (type, fullSize) => {
-  //   const chartComponent = useMemo(() => {
-  //     return type ? chartTypes[type] : null;
-  //   }, [type]);
-  
-  //   return chartComponent ? (
-  //     React.cloneElement(chartComponent, {
-  //       width: fullSize ? 700 : 300,
-  //       height: fullSize ? 400 : 150,
-  //     })
-  //   ) : (
-  //     <Text>Add a chart</Text>
-  //   );
-  // };
-
   return (
     <ChakraProvider>
       <Flex height="100vh">
@@ -158,7 +143,6 @@ const Dashboard = () => {
               key={sectionKey}
               display={selectedSection === sectionKey ? "block" : "none"}
             >
-              {/* <Text fontSize="xl" mb="4">{`Section ${sectionIdx + 1}`}</Text> */}
               <Tabs>
                 <TabList>
                   {sections[sectionKey].map((_, idx) => (
@@ -217,9 +201,7 @@ const Dashboard = () => {
                         rounded="md"
                         shadow="md"
                       >
-                        {/* {renderChart(chartType, fullSize, `${chartType}-${fullSize}`)} */}
                         {renderChart(chartType, fullSize)}
-                        <Text>Test Chart sub-section</Text>
                       </Box>
                     </TabPanel>
                   ))}

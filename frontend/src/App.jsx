@@ -1,12 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { ChakraProvider } from "@chakra-ui/react";
-import DashboardPage from "./DashboardPage";
-import { UseChannelsDataContext } from "./contexts/ChannelsContext";
 
 import {
-  Switch,
-  Router,
   BrowserRouter,
   Routes,
   Route,
@@ -26,12 +22,9 @@ const App = () => {
             path="/"
             element={
               <ChakraProvider>
-                {/* <UseChannelsDataContext> */}
-                  {/* <DashboardPage /> */}
-                  <DataProvider>
-                    <Dashboard />
-                  </DataProvider>
-                {/* </UseChannelsDataContext> */}
+                <DataProvider>
+                  <Dashboard />
+                </DataProvider>
               </ChakraProvider>
             }
           />
