@@ -42,7 +42,7 @@ import { environment } from "../environments/environment";
 import ConfigButton from "./ConfigButton";
 import { FaMessage } from "react-icons/fa6";
 import ChatsPage from "../ChatsPage";
-import { saveAs } from 'file-saver';
+import { saveAs } from "file-saver";
 
 // Sample data for the charts
 const data = [
@@ -112,28 +112,25 @@ const Dashboard = () => {
       "cashFlowStatement",
       `${environment.cashFlowUrl}/cashflow?symbol=${symbol}`
     );
+    fetchData("ratios", `${environment.ratiosUrl}/ratios?symbol=${symbol}`);
     fetchData(
-      "ratios",
-      `${environment.ratiosUrl}/ratios?symbol=${symbol}`
+      "sentiment",
+      `${environment.sentimentUrl}/ticker_info/invsentiment?ticker=${symbol}`
     );
     fetchData(
-        "sentiment",
-        `${environment.sentimentUrl}/ticker_info/invsentiment?ticker=${symbol}`
+      "comparison",
+      `${environment.sectorComparisonUrl}/sectorcomparison?symbol=${symbol}`
     );
-    fetchData(
-        "comparison",
-        `${environment.sectorComparisonUrl}/sectorcomparison?symbol=${symbol}`
-    )
   };
 
   useEffect(() => {
     fetchAllData(selectedSection.split("-")[0].trim());
   }, [selectedSection]);
 
-//   const handleComparisonClick = (symbol) => {
-//     addNewSection();
-//     handleSectionNameSubmit(symbol);
-//   }
+  //   const handleComparisonClick = (symbol) => {
+  //     addNewSection();
+  //     handleSectionNameSubmit(symbol);
+  //   }
 
   // Function to add a new section without an initial name
   const addNewSection = () => {
@@ -226,9 +223,9 @@ const Dashboard = () => {
   }, []);
 
   const handleDownload = (dataType) => {
-    const fileName = `${dataType}_data.json`; 
-    const dataToDownload = JSON.stringify(state[dataType]); 
-    const blob = new Blob([dataToDownload], { type: 'application/json' });
+    const fileName = `${dataType}_data.json`;
+    const dataToDownload = JSON.stringify(state[dataType]);
+    const blob = new Blob([dataToDownload], { type: "application/json" });
     saveAs(blob, fileName);
   };
 
@@ -242,9 +239,9 @@ const Dashboard = () => {
           sections={Object.keys(sections)}
         />
         {/* Chatbot access */}
-        <Box position={"absolute"} bottom={8} right={20} zIndex={999}>
+        <Box position="absolute" bottom={12} right={20} zIndex={999}>
           <ConfigButton
-            type={"normal"}
+            type="normal"
             noFooter={true}
             buttonText="OpenTicks"
             buttonIcon={<FaMessage />}
@@ -252,8 +249,31 @@ const Dashboard = () => {
             modalContent={<ChatsPage />}
             width="fit-content"
             height="fit-content"
+            style={{
+              padding: "12px 24px",
+              color: "white",
+              borderRadius: "8px",
+              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.3)",
+              transition: "transform 0.2s ease, box-shadow 0.2s ease",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              fontSize: "16px",
+              cursor: "pointer",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "scale(1.05)";
+              e.currentTarget.style.boxShadow =
+                "0px 6px 12px rgba(0, 0, 0, 0.4)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "scale(1)";
+              e.currentTarget.style.boxShadow =
+                "0px 4px 8px rgba(0, 0, 0, 0.3)";
+            }}
           />
         </Box>
+
         {/* Main content area */}
         <Box flex="1" p="4">
           <DashboardSectionHeader title={selectedSection} />

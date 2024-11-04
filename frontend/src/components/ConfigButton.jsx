@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button, IconButton, useDisclosure } from '@chakra-ui/react';
 import ConfigModal from './ConfigModal';
 
-const ConfigButton = ({ type, buttonText, buttonIcon, modalTitle, modalContent, width, height, noFooter }) => {
+const ConfigButton = ({ type, buttonText, buttonIcon, modalTitle, modalContent, width, height, noFooter, style, onMouseEnter, onMouseLeave }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     return (
@@ -22,6 +22,9 @@ const ConfigButton = ({ type, buttonText, buttonIcon, modalTitle, modalContent, 
                         aria-label={buttonText}
                         onClick={onOpen}
                         colorScheme="teal"
+                        style={style}
+                        onMouseEnter={onMouseEnter}
+                        onMouseLeave={onMouseLeave}
                     >
                        {buttonIcon} { buttonIcon ? <p>&nbsp;</p>: null} {buttonText}
                     </Button>
