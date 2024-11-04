@@ -62,6 +62,16 @@ const ChatsPage = () => {
     });
   };
 
+  function arrayBufferToBase64(buffer) {
+    let binary = "";
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
+  }
+
   const handleChat = async () => {
     console.log("entered ");
     setLoading(true);
@@ -84,14 +94,14 @@ const ChatsPage = () => {
     // Read the file as an ArrayBuffer if it exists
     if (currentTab.file) {
       const fileArrayBuffer = await currentTab.file.arrayBuffer();
-      requestPayload.files = Array.from(new Uint8Array(fileArrayBuffer)); // Convert to array for JSON serialization
+      requestPayload.files = arrayBufferToBase64(fileArrayBuffer); // Convert to array for JSON serialization
     }
 
     try {
       const response = await fetch(environment.chatURL + "/chat", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json", // Set the appropriate content type
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(requestPayload), // Send the JSON payload
       });
@@ -252,8 +262,8 @@ const ChatsPage = () => {
       </Tabs>
 
       {chatMessage && <Text mt={2}>{chatMessage}</Text>}
-{/* File name display area */}
-{selectedFile && (
+      {/* File name display area */}
+      {selectedFile && (
         <Box
           bg="gray.100"
           borderRadius="md"
@@ -271,10 +281,7 @@ const ChatsPage = () => {
           {loading ? <LoadingSpinner /> : null}
 
           {/* File Upload Area */}
-          <Button
-            colorScheme="blue"
-            variant={'outline'}
-          >
+          <Button colorScheme="blue" variant={"outline"}>
             <Input
               type="file"
               accept="*/*" // Allow all file types

@@ -13,7 +13,7 @@ export const environment = {
 
     production: production,
     serverUrl: `${production ? 'https://tbd:9000/api' : 'http://127.0.0.1:9999/api'}`,
-    chatURL: `${production ? 'https://7wvo8rflv2.execute-api.us-west-2.amazonaws.com/api' : 'http://127.0.0.1:8000/api'}`,
+    chatURL: `${production ? 'https://7wvo8rflv2.execute-api.us-west-2.amazonaws.com/api' : 'http://localhost:8000/api'}`,
     socketManagerUrl: `${production ? 'tbd:9000' : 'localhost:9000'}`,
     cosineSocketUrl:`${production ? 'tbd:9000' : 'localhost:9000'}`,
     lineSocketUrl:`${production ? 'tbd:8999' : 'localhost:8999'}`,

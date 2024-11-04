@@ -5,7 +5,7 @@ class BedrockService:
     def __init__(self, region_name='us-west-2'):
         self.client = boto3.client(service_name='bedrock-runtime', region_name=region_name)
 
-    def chat_with_document(self, question, document_bytes=None, document_format=None):
+    def chat_with_document(self, question, document_bytes=None, document_name=None):
         # Structure the conversation input as required by AWS
         conversation = [
             {
@@ -14,12 +14,14 @@ class BedrockService:
             }
         ]
 
+        # print("document_bytes: ", document_bytes)
+        print("document_name: ", document_name)
         # Add document info if provided
-        if document_bytes and document_format:
+        if document_bytes and document_name:
             document_info = {
                 "document": {
-                    "name": "Uploaded Document",  # You can customize this if needed
-                    "format": document_format,
+                    "name": document_name.replace('.pdf', ''),  # You can customize this if needed
+                    "format": "pdf",
                     "source": {
                         "bytes": document_bytes
                     }
@@ -31,6 +33,8 @@ class BedrockService:
         conversation[0]["content"].append({
             "text": question
         })
+
+        print("conversation: ", conversation)
 
         # Define the chatbot configurations
         model_id = "anthropic.claude-3-5-sonnet-20240620-v1:0"
