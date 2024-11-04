@@ -88,11 +88,6 @@ const Dashboard = () => {
       { name: "Financials", chartType: "Financials", fullSize: true },
       { name: "Sentiment Analysis", chartType: "Sentiment", fullSize: true },
     ],
-    "Company 1": [
-      { name: "Overview", chartType: "Overview", fullSize: true },
-      { name: "Financials", chartType: "Financials", fullSize: true },
-      { name: "Sentiment Analysis", chartType: "Sentiment", fullSize: true },
-    ],
   });
   const [newSectionName, setNewSectionName] = useState("");
   const { state, fetchData } = useDataContext();
