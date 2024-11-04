@@ -15,12 +15,14 @@ import {
   TabPanel,
   CloseButton,
   useColorModeValue,
+  Flex,
 } from "@chakra-ui/react";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, act } from "react";
 import { FiUpload, FiSend } from "react-icons/fi";
 import { environment } from "./environments/environment";
 import LoadingSpinner from "./components/LoadingSpinner";
 import { useDataContext } from "./contexts/DataContext";
+import PromptExamples from "./components/PromptExamples";
 
 const ChatsPage = () => {
   const [tabIndex, setTabIndex] = useState(0);
@@ -214,6 +216,11 @@ const ChatsPage = () => {
     }
   };
 
+  const actionClick = (text) => {
+    handleQuestionChange({target: { value: text}});
+    handleChat();
+  }
+
   return (
     <Container
       display="flex"
@@ -255,6 +262,7 @@ const ChatsPage = () => {
             >
               <Box flex="1" overflowY="auto" mb={4}>
                 <VStack align="stretch" spacing={3}>
+                 <PromptExamples handleClick={actionClick} />
                   {tab.messages.map((msg, i) => (
                     <Box key={i}>
                       <Box
@@ -339,6 +347,7 @@ const ChatsPage = () => {
             onChange={handleQuestionChange}
             placeholder="Type your question here..."
             borderRadius="md 0 0 md"
+            id="prompt-input"
             mb={0}
           />
           <Button

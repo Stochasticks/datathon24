@@ -130,6 +130,11 @@ const Dashboard = () => {
     fetchAllData(selectedSection.split("-")[0].trim());
   }, [selectedSection]);
 
+//   const handleComparisonClick = (symbol) => {
+//     addNewSection();
+//     handleSectionNameSubmit(symbol);
+//   }
+
   // Function to add a new section without an initial name
   const addNewSection = () => {
     const sectionKey = `Company ${Object.keys(sections).length + 1}`;
@@ -221,8 +226,8 @@ const Dashboard = () => {
   }, []);
 
   const handleDownload = (dataType) => {
-    const fileName = `${dataType}_data.json`; // You can change this to the desired format
-    const dataToDownload = JSON.stringify(state[dataType]); // Adjust according to how you store your data
+    const fileName = `${dataType}_data.json`; 
+    const dataToDownload = JSON.stringify(state[dataType]); 
     const blob = new Blob([dataToDownload], { type: 'application/json' });
     saveAs(blob, fileName);
   };
@@ -255,17 +260,6 @@ const Dashboard = () => {
 
           {/* Render search bar for renaming new sections */}
           {selectedSection.startsWith("Company") && (
-            // <Box mb="4">
-            //   <Input
-            //     placeholder="Enter section name"
-            //     value={newSectionName}
-            //     onChange={(e) => setNewSectionName(e.target.value)}
-            //     onKeyDown={(e) => e.key === "Enter" && handleSectionNameSubmit()}
-            //   />
-            //   <Button onClick={handleSectionNameSubmit} mt="2">
-            //     Start Analysis
-            //   </Button>
-            // </Box>
             <StockSearchBar handleSectionNameSubmit={handleSectionNameSubmit} />
           )}
 
