@@ -24,7 +24,7 @@ import LoadingSpinner from "./components/LoadingSpinner";
 const ChatsPage = () => {
   const [tabIndex, setTabIndex] = useState(0);
   const [tabs, setTabs] = useState([
-    { chatId: "", messages: [], question: "", file: null },
+    { chatId: crypto.randomUUID().replace(/-/g, ''), messages: [], question: "", file: null },
   ]);
   const [uploadMessage, setUploadMessage] = useState("");
   const [chatMessage, setChatMessage] = useState("");

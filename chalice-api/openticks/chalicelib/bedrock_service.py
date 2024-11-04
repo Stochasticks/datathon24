@@ -2,8 +2,24 @@ import boto3
 from botocore.exceptions import ClientError
 
 class BedrockService:
-    def __init__(self, region_name='us-west-2'):
+    def __init__(self, region_name='us-west-2', bucket_name='openticks-bucket'):
         self.client = boto3.client(service_name='bedrock-agent-runtime', region_name=region_name)
+        self.s3_client = boto3.client('s3', region_name=region_name)
+        self.bucket_name = bucket_name
+
+    def upload_document_to_s3(self, document_bytes, document_name):
+        try:
+            # Upload the document to S3
+            self.s3_client.put_object(
+                Bucket=self.bucket_name,
+                Key=document_name,
+                Body=document_bytes
+            )
+            # Return the URL of the uploaded document
+            return f"https://{self.bucket_name}.s3.{self.s3_client.meta.region_name}.amazonaws.com/{document_name}"
+        except ClientError as e:
+            print(f"An error occurred while uploading to S3: {e.response['Error']['Message']}")
+            return None
 
     def invoke_agent(self, agent_id, agent_alias_id, session_id, prompt):
         output_text = ""
@@ -54,7 +70,16 @@ class BedrockService:
         }
 
     def chat_with_document(self, session_id, question, document_bytes=None, document_name=None):
-        # Construct the input text for the agent
+        # if document_bytes and document_name:
+        #     document_url = self.upload_document_to_s3(document_bytes, document_name)
+        #     if not document_url:
+        #         return {"message": "Failed to upload document to S3."}
+
+        #     # Optionally include the document URL in the prompt
+        #     input_text = f"{question}\nDocument URL: {document_url}"
+        # else:
+        #     # Construct the input text for the agent
+        #     input_text = question
         input_text = question
         
         # Call the invoke_agent method
