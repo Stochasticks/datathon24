@@ -24,14 +24,20 @@ import { useDataContext } from "./contexts/DataContext";
 
 const ChatsPage = () => {
   const [tabIndex, setTabIndex] = useState(0);
-  const [tabs, setTabs] = useState([
-    {
-      chatId: crypto.randomUUID().replace(/-/g, ""),
-      messages: [],
-      question: "",
-      file: null,
-    },
-  ]);
+  const [tabs, setTabs] = useState(() => {
+    // Load tabs from local storage if available
+    const savedTabs = localStorage.getItem("tabs");
+    return savedTabs
+      ? JSON.parse(savedTabs)
+      : [
+          {
+            chatId: crypto.randomUUID().replace(/-/g, ""),
+            messages: [],
+            question: "",
+            file: null,
+          },
+        ];
+  });
   const [uploadMessage, setUploadMessage] = useState("");
   const [chatMessage, setChatMessage] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
@@ -49,6 +55,11 @@ const ChatsPage = () => {
   useEffect(() => {
     scrollToBottom();
   }, [tabs[tabIndex]?.messages]);
+
+  // Save tabs to local storage when they change
+  useEffect(() => {
+    localStorage.setItem("tabs", JSON.stringify(tabs));
+  }, [tabs]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0]; // Only one file for simplicity
@@ -84,12 +95,6 @@ const ChatsPage = () => {
   const handleChat = async () => {
     setLoading(true);
     const currentTab = tabs[tabIndex];
-
-    // Check for necessary inputs
-    // if (!currentTab.chatId || !currentTab.question) {
-    //     alert("Please upload a file and enter a question.");
-    //     return;
-    // }
 
     // Prepare the request payload
     const requestPayload = {
@@ -127,7 +132,6 @@ const ChatsPage = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Extracting the assistant's response
         const assistantMessage = data.response.output_text;
 
         setTabs((prevTabs) => {
@@ -180,7 +184,6 @@ const ChatsPage = () => {
 
   const handleTabFile = () => {
     const el = document.querySelector("#file-upload-button");
-    // Check if the element exists and is an input type file
     if (el && el.type === "file") {
       el.value = ""; // Clear the file input
     } else {
@@ -249,7 +252,6 @@ const ChatsPage = () => {
               overflowY={"scroll"}
               overflowX={"hidden"}
             >
-              {/* Chat Messages Section */}
               <Box flex="1" overflowY="auto" mb={4}>
                 <VStack align="stretch" spacing={3}>
                   {tab.messages.map((msg, i) => (
@@ -313,7 +315,7 @@ const ChatsPage = () => {
           <Button colorScheme="blue" variant={"outline"}>
             <Input
               type="file"
-              accept="*/*" // Allow all file types
+              accept=".pdf,.doc,.docx,.txt,.json,.csv, xlsx" // Allow all file types
               position="absolute"
               id="file-upload-button"
               top="0"
