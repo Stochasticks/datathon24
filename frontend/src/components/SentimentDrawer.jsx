@@ -35,13 +35,16 @@ const SentimentDrawer = () => {
   
             <DrawerBody>
               <Text fontSize={"1xm"} fontWeight={"bold"} color="teal.500">Contributing factors</Text>
-              <Text> Data is scraped from the web to create a sentiment score. For each source of data, we perform sentiment analysis using NLP strategies.</Text>
+              <Text> Data is scraped from the web to create a sentiment score. For each source of data, we perform sentiment analysis on the tokens.</Text>
               <Divider mt={4} mb={4} orientation='horizontal' />
               <Text fontSize={"1xm"} fontWeight={"bold"} color="teal.500">Retail sentiment</Text>
               <Text> We scrape forums and spaces where retail investors discuss, such as <span style={{fontWeight:"bold"}}>Reddit</span> and <span style={{fontWeight:"bold"}}>wallstreetbets</span>.</Text>
               <Divider mt={4} mb={4} orientation='horizontal' />
               <Text fontSize={"1xm"} fontWeight={"bold"} color="teal.500">News sentiment</Text>
-              <Text> We look at articles that mention the ticker and scrape the contents of the pages to perform sentiment analysis. News websites like CNBC, Bloomberg and Wall Street Journal. Since many of these websites have paywalls, we use Wayback machine to access their articles.</Text>
+              <Text> We look at articles that mention the ticker. News websites like CNBC, Bloomberg and Wall Street Journal. Since many of these websites have paywalls, we use Wayback machine to access their articles.</Text>
+              <Divider mt={4} mb={4} orientation='horizontal' />
+              <Text fontSize={"1xm"} fontWeight={"bold"} color="teal.500">Investor sentiment</Text>
+              <Text>We use the 50 moving-average to measure investor sentiment.</Text>
             </DrawerBody>
   
             <DrawerFooter>
