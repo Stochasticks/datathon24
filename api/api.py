@@ -128,7 +128,7 @@ def get_income_statement():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/api/cash_flow_statement', methods=['GET'])
+@app.route('/api/cashflow', methods=['GET'])
 def get_cash_flow_statement():
     # Get the stock symbol from query parameters
     stock_symbol = request.args.get('symbol')
@@ -169,7 +169,7 @@ def get_cash_flow_statement():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/api/financial_ratios', methods=['GET'])
+@app.route('/api/ratios', methods=['GET'])
 def get_financial_ratios():
     # Get the stock symbol from query parameters
     stock_symbol = request.args.get('symbol')
@@ -219,6 +219,66 @@ def get_financial_ratios():
         return response, 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/sector_comparison', methods=['GET'])
+def sector_comparison():
+    stock_symbol = request.args.get('symbol')
+    if not stock_symbol:
+        return jsonify({"error": "No stock symbol provided"}), 400
+
+    try:
+        # Fetch the stock data for the provided symbol
+        stock = yf.Ticker(stock_symbol)
+        sector = stock.info.get('sector')
+
+        if not sector:
+            return jsonify({"error": "Sector not found for the given stock symbol"}), 404
+        
+        sector_stocks = []
+        tickers = yf.Tickers(' '.join(ticker_dict.keys()))  # Fetch tickers based on the ticker_dict
+        print('Available tickers:', list(tickers.tickers.keys())[:5])  # Log the tickers being processed
+
+        count = 0  # Initialize a counter for the number of stocks added
+        for ticker_symbol in tickers.tickers.keys():  # Iterate over the keys (ticker symbols)
+            if count >= 5:  # Check if we have already added 5 stocks
+                break
+            try:
+                info = tickers.tickers[ticker_symbol].info
+                if info.get('sector') == sector and info.get('symbol') != stock_symbol:
+                    # Prepare financial ratios
+                    ratios = {
+                        "marketCap": info.get("marketCap"),
+                        "volume": info.get("volume"),
+                        "dividendYield": info.get("dividendYield"),
+                        "priceToEarnings": info.get("trailingPE"),
+                        "priceToBook": info.get("priceToBook"),
+                        "debtToEquity": info.get("debtToEquity"),
+                        "returnOnEquity": info.get("returnOnEquity"),
+                        "currentRatio": info.get("currentRatio"),
+                        "quickRatio": info.get("quickRatio"),
+                        "grossMargins": info.get("grossMargins"),
+                        "operatingMargins": info.get("operatingMargins"),
+                        "profitMargins": info.get("profitMargins"),
+                    }
+
+                    # Filter out None values from ratios while keeping the same declared order
+                    ratios = {k: v for k, v in ratios.items() if v is not None}
+
+                    # Append stock info and ratios to the sector_stocks list
+                    sector_stocks.append({
+                        "symbol": info.get('symbol'),
+                        "name": info.get('longName'),
+                        "ratios": ratios  # Include the ratios in the response
+                    })
+                    count += 1  # Increment the counter when a stock is added
+            except Exception as e:
+                print(f"Error fetching data for {ticker_symbol}: {e}")
+
+        return jsonify(sector_stocks), 200  # Return the list of sector stocks with ratios
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 load_ticker_dict()
 

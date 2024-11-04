@@ -119,6 +119,10 @@ const Dashboard = () => {
     fetchData(
         "sentiment",
         `${environment.sentimentUrl}/ticker_info/invsentiment?ticker=${symbol}`
+    );
+    fetchData(
+        "comparison",
+        `${environment.sectorComparisonUrl}/sector_comparison?symbol=${symbol}`
     )
   };
 

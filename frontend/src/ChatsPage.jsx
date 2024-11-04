@@ -116,6 +116,7 @@ const ChatsPage = () => {
         income statement: ${state.incomeStatement}
         cash flow: ${state.cashFlowStatement}
         ratios: ${state.ratios}
+        same sector companies for comparison: ${state.comparison}
       `;
       requestPayload.question = contextInfo;
     }
