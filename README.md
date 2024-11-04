@@ -1,6 +1,5 @@
-Here's a README template for starting each of the three repositories you mentioned. It includes setup instructions, scripts, and any additional details needed to run each application:
-
----
+### The application is available at this link without any building : 
+### [Click here to use the hosted application](https://main.dmfjhi35mqoi1.amplifyapp.com/)
 
 # Project Setup
 
@@ -75,9 +74,6 @@ The following npm scripts are available:
   ```bash
   npm run start:live
   ```
-
----
-Certainly! Here’s an updated version of the `README.md` to reflect the additional endpoints in the Flask and Chalice applications:
 
 ---
 
