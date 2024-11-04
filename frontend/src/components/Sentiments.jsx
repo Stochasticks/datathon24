@@ -2,10 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Text } from "@chakra-ui/react";
 import SentimentContainer from "./SentimentContainer";
 import consensus_dict from '../utils/consensus_dict';
-const mock_response = {
-  body: "{\"message\": \"[{\\\"ticker\\\": \\\"AAPL\\\", \\\"hedgeFundTrendValue\\\": -386045483.0, \\\"smartScore\\\": 7, \\\"bloggerSectorAvg\\\": 0.6901, \\\"bloggerBullishSentiment\\\": 0.74, \\\"insidersLast3MonthsSum\\\": -22602362.0, \\\"newsSentimentsBearishPercent\\\": 0.1026, \\\"newsSentimentsBullishPercent\\\": 0.8974, \\\"investorHoldingChangeLast7Days\\\": -0.00108054984247974, \\\"investorHoldingChangeLast30Days\\\": 0.0095256980618674, \\\"priceTarget\\\": 245.84, \\\"convertedPriceTarget\\\": 245.84, \\\"convertedPriceTargetCurrencyId\\\": 1, \\\"fundamentalsReturnOnEquity\\\": 1.574125, \\\"fundamentalsAssetGrowth\\\": 0.03516, \\\"technicalsTwelveMonthsMomentum\\\": 0.2878, \\\"sma\\\": \\\"Positive\\\", \\\"analystConsensus\\\": \\\"ModerateBuy\\\", \\\"hedgeFundTrend\\\": \\\"Decreased\\\", \\\"insiderTrend\\\": \\\"SoldShares\\\", \\\"investorSentiment\\\": \\\"Neutral\\\", \\\"newsSentiment\\\": \\\"VeryBullish\\\", \\\"bloggerConsensus\\\": \\\"Bullish\\\", \\\"marketCountryId\\\": 1, \\\"isomic\\\": \\\"XNAS\\\"}]\"}",
-  statusCode: 200
-};
+
 const Sentiments = (props) => {
   const [data, setData] = useState({});
   const ticker = props.symbol;
@@ -34,15 +31,7 @@ const Sentiments = (props) => {
         })
         .catch((error) => {
           console.error("Error fetching data:", error);
-        });
-        /*
-        const parsedResponse = JSON.parse(mock_response.body);
-
-        // Step 2: Parse the inner JSON in `message`
-        const finalData = JSON.parse(parsedResponse.message);
-        console.log(finalData[0]);
-        setData(finalData[0]);*/
-            
+        });            
     }
   }, [ticker]);
 
@@ -56,8 +45,22 @@ const Sentiments = (props) => {
                 <SentimentContainer name="Investors"  consensus={ consensus_dict.investorSentiment[data?.investorSentiment] }/>
                 <SentimentContainer name="News media" consensus={ consensus_dict.newsSentiment[data?.newsSentiment] } bullishScore={Math.round(data?.newsSentimentsBullishPercent * 100)} />          
         </div>
-        <div style={{width: "100%",height: "200px", backgroundColor: "rgba(255,255,255,0.5)", borderRadius: "10px", margin: "4px 0"}}>
-        <Text fontSize="2xl" mb={4} mt={4} style={{ width: "100%", textAlign: "center", fontWeight: "bold" }} >Smart Score</Text>  
+        <div style={{display:'flex',flexDirection:'column', width: "100%",height: "200px", backgroundColor: "rgba(255,255,255,0.5)", borderRadius: "10px", margin: "8px 4px", alignItems:'center'}}>
+          <Text fontSize="2xl" mb={4} mt={4} style={{ width: "100%", textAlign: "center", fontWeight: "bold" }} >Smart Score</Text> 
+          <div style={{width:'100%', display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'center' }}>
+            <div style={{width: '80%', height: '20px', backgroundColor: '#e0e0e0', borderRadius: '10px', overflow: 'hidden', marginTop: '10px' }}>
+              <div
+                style={{
+                  width: `${data.smartScore / 10.0 * 100}%`,
+                  height: '100%',
+                  background: 'linear-gradient(90deg, red, orange, gold, green)',
+                  borderRadius: '10px 0 0 10px',
+                }}
+                />
+            </div>
+            <Text  ml={4} fontSize="3xl" style={{fontWeight:'bold'}}>{data.smartScore}</Text>
+          </div> 
+
         </div>
     </div>
   );

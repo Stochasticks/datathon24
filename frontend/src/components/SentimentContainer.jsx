@@ -6,7 +6,7 @@ const SentimentContainer = (props) => {
   return (
         <div
                 style={{
-                width: "300px",
+                width: "33%",
                 height: "300px",
                 backgroundColor: "rgba(255,255,255,0.5)",
                 borderRadius: "10px",
