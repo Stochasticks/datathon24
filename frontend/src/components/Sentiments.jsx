@@ -29,6 +29,7 @@ const Sentiments = (props) => {
             .replace(/\bNone\b/g, "null")
             .replace(/'\b-'\b/g, "null");
          const finalData = JSON.parse(new_data); 
+         console.log(finalData);
         setData(finalData[0]); 
         })
         .catch((error) => {
@@ -47,15 +48,17 @@ const Sentiments = (props) => {
 
   return (
     <div style={{ overflowX: "hidden", overflowY: "scroll", height: "600px" }}>
-        <Text style={{ marginLeft: "10px" }} fontSize="2xl" mb={4}>
+        <Text style={{ marginLeft: "10px", fontWeight:'bold' }} fontSize="4xl" mb={4}>
           Sentiments
         </Text>
         <div style={{display:"flex", flexDirection:"row", width:"100%"}}>
-                <SentimentContainer name="Retail"   consensus={ consensus_dict.bloggerConsensus[data?.bloggerConsensus] }/>
+                <SentimentContainer name="Retail"   consensus={ consensus_dict.bloggerConsensus[data?.bloggerConsensus] } bullishScore={Math.round(data?.bloggerBullishSentiment * 100)}/>
                 <SentimentContainer name="Investors"  consensus={ consensus_dict.investorSentiment[data?.investorSentiment] }/>
-                <SentimentContainer name="News media" consensus={ consensus_dict.newsSentiment[data?.newsSentiment] } />          
+                <SentimentContainer name="News media" consensus={ consensus_dict.newsSentiment[data?.newsSentiment] } bullishScore={Math.round(data?.newsSentimentsBullishPercent * 100)} />          
         </div>
-                 
+        <div style={{width: "100%",height: "200px", backgroundColor: "rgba(255,255,255,0.5)", borderRadius: "10px", margin: "4px 0"}}>
+        <Text fontSize="2xl" mb={4} mt={4} style={{ width: "100%", textAlign: "center", fontWeight: "bold" }} >Smart Score</Text>  
+        </div>
     </div>
   );
 };
