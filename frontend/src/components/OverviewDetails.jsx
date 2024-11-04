@@ -120,6 +120,7 @@ const OverviewDetails = () => {
             width={"100%"}
             bg={bg}
             padding={2}
+            mt={3}
             borderRadius="lg"
             boxShadow="md"
             display="flex"
