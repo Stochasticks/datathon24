@@ -33,11 +33,11 @@ const tipranksEnumDictionary = {
   },
 
   analystConsensus: {
-    "StrongBuy": { label: "Strong Buy", color: "#006400" },
-    "ModerateBuy": { label: "Moderate Buy", color: "#00FF00" },
-    "Hold": { label: "Hold", color: "#FFD700" },
-    "ModerateSell": { label: "Moderate Sell", color: "#FFA500" },
-    "Sell": { label: "Sell", color: "#FF0000" },
+    "StrongBuy":  "Strong Buy",
+    "ModerateBuy": "Moderate Buy",
+    "Hold":  "Hold",
+    "ModerateSell": "Moderate Sell" ,
+    "Sell":  "Sell" ,
   },
 
   bloggerConsensus: {

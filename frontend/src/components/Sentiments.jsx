@@ -3,6 +3,7 @@ import { Box, Text, Flex, useColorModeValue } from "@chakra-ui/react";
 import SentimentContainer from "./SentimentContainer";
 import consensus_dict from '../utils/consensus_dict';
 import { useDataContext } from "../contexts/DataContext";
+import SentimentScoreBar from "./SentimentScoreBar";
 
 const Sentiments = ({ symbol }) => {
   const { state } = useDataContext();
@@ -42,21 +43,9 @@ const Sentiments = ({ symbol }) => {
         p={6}
       >
         <Text fontSize="2xl" fontWeight="bold" mb={4} textAlign="center">
-          Smart Score
+          Sentiment Score
         </Text>
-        <Flex width="80%" align="center" justify="center">
-          <Box width="80%" height="20px" bg={smartScoreBg} borderRadius="lg" overflow="hidden">
-            <Box
-              width={`${(state.sentiment?.smartScore / 10) * 100}%`}
-              height="100%"
-              bg="linear-gradient(90deg, red, orange, gold, green)"
-              borderRadius="lg 0 0 lg"
-            />
-          </Box>
-          <Text ml={4} fontSize="3xl" fontWeight="bold" color="teal.500">
-            {state.sentiment?.smartScore}
-          </Text>
-        </Flex>
+        <SentimentScoreBar symbol={symbol}  />
       </Flex>
     </Box>
   );

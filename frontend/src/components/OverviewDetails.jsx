@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Box, Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
+import { Box, Table, Thead, Tbody, Tr, Th, Td, Text, useColorModeValue } from "@chakra-ui/react";
 import { useDataContext } from "../contexts/DataContext";
+import SentimentScoreBar from "./SentimentScoreBar";
+import consensus_dict from '../utils/consensus_dict';
+
 
 const OverviewDetails = () => {
   const [data, setData] = useState({});
   const { state } = useDataContext();
+  const bg = useColorModeValue("whiteAlpha.800", "gray.700");
 
   const formatCurrency = (value) => {
     // Only format numbers, return strings as they are
@@ -109,12 +113,21 @@ const OverviewDetails = () => {
             ))}
           <Box
             height={"200px"}
-            width={"100%"}
-            backgroundColor={"teal"}
-            padding={8}
-            margin={8}
+            width={"200px"}
+            bg={bg}
+            padding={2}
+            borderRadius="lg"
+            boxShadow="md"
+            display="flex"
+            flexDirection="column"
+            justifyContent="flex-start"
+            alignItems="center"
+            textAlign="center"
           >
-            Insert Sentiment Insights
+            <Text fontSize={"1xl"} fontWeight={"bold"} mt={3}>Analyst consensus</Text>
+            <Text fontSize={"1xl"} mt={1} fontWeight="bold" color="teal.500">{consensus_dict.analystConsensus[state.sentiment?.analystConsensus]}</Text>
+            <Text fontSize={"1xl"} fontWeight={"bold"} mt={4}>Sentiment Score </Text>
+            <SentimentScoreBar symbol={state.sentiment?.ticker}/>
           </Box>
         </Tbody>
       </Table>
