@@ -3,60 +3,59 @@ from botocore.exceptions import ClientError
 
 class BedrockService:
     def __init__(self, region_name='us-west-2'):
-        self.client = boto3.client(service_name='bedrock-runtime', region_name=region_name)
+        self.client = boto3.client(service_name='bedrock-agent-runtime', region_name=region_name)
 
-    def chat_with_document(self, question, document_bytes=None, document_name=None):
-        # Structure the conversation input as required by AWS
-        conversation = [
-            {
-                "role": "user",
-                "content": []
-            }
-        ]
-
-        # print("document_bytes: ", document_bytes)
-        print("document_name: ", document_name)
-        # Add document info if provided
-        if document_bytes and document_name:
-            document_info = {
-                "document": {
-                    "name": document_name.replace('.pdf', ''),  # You can customize this if needed
-                    "format": "pdf",
-                    "source": {
-                        "bytes": document_bytes
-                    }
-                }
-            }
-            conversation[0]["content"].append(document_info)
-
-        # Add user message
-        conversation[0]["content"].append({
-            "text": question
-        })
-
-        print("conversation: ", conversation)
-
-        # Define the chatbot configurations
-        model_id = "anthropic.claude-3-5-sonnet-20240620-v1:0"
-        inference_config = {
-            "maxTokens": 2000,
-            "stopSequences": [],
-            "temperature": 0,
-            "topP": 0.999
-        }
-        additional_model_request_fields = {
-            "top_k": 250
-        }
+    def invoke_agent(self, agent_id, agent_alias_id, session_id, prompt):
+        output_text = ""
+        citations = []
+        trace = {}
 
         try:
-            # Call the converse API with additional configurations
-            response = self.client.converse(
-                messages=conversation,
-                modelId=model_id,
-                inferenceConfig=inference_config,
-                additionalModelRequestFields=additional_model_request_fields
+            response = self.client.invoke_agent(
+                agentId=agent_id,
+                agentAliasId=agent_alias_id,
+                enableTrace=True,
+                sessionId=session_id,
+                inputText=prompt,
             )
-            return response
+
+            has_guardrail_trace = False
+            for event in response.get("completion", []):
+                # Combine the chunks to get the output text
+                if "chunk" in event:
+                    chunk = event["chunk"]
+                    output_text += chunk["bytes"].decode()
+                    if "attribution" in chunk:
+                        citations += chunk["attribution"].get("citations", [])
+
+                # Extract trace information from all events
+                if "trace" in event:
+                    for trace_type in ["guardrailTrace", "preProcessingTrace", "orchestrationTrace", "postProcessingTrace"]:
+                        if trace_type in event["trace"]["trace"]:
+                            mapped_trace_type = trace_type
+                            if trace_type == "guardrailTrace":
+                                if not has_guardrail_trace:
+                                    has_guardrail_trace = True
+                                    mapped_trace_type = "preGuardrailTrace"
+                                else:
+                                    mapped_trace_type = "postGuardrailTrace"
+                            if mapped_trace_type not in trace:
+                                trace[mapped_trace_type] = []
+                            trace[mapped_trace_type].append(event["trace"]["trace"][trace_type])
+
         except ClientError as e:
             print(f"An error occurred: {e.response['Error']['Message']}")
             return None
+
+        return {
+            "output_text": output_text,
+            "citations": citations,
+            "trace": trace
+        }
+
+    def chat_with_document(self, session_id, question, document_bytes=None, document_name=None):
+        # Construct the input text for the agent
+        input_text = question
+        
+        # Call the invoke_agent method
+        return self.invoke_agent(agent_id="HNQWJG3MP3", agent_alias_id="XXWAU1FAEJ", session_id=session_id, prompt=input_text)

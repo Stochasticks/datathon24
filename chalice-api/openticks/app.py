@@ -24,6 +24,7 @@ def chat_with_document():
     # print(f"Request Body: {request.json_body.keys()}")
 
     question = request.json_body.get('question')
+    sessionId = request.json_body.get('chat_id')
     # print(question)
 
     file_bytes = None
@@ -53,7 +54,7 @@ def chat_with_document():
                         status_code=400)
 
     # Call the service function with the provided parameters
-    response = bedrock_service.chat_with_document(question, file_bytes, file_name)
+    response = bedrock_service.chat_with_document(session_id=sessionId, question=question, document_bytes=file_bytes, document_name=file_name)
     print("response: ", response)
 
     if response:

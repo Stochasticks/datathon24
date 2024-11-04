@@ -173,9 +173,10 @@ const ChatsPage = () => {
 
   const addTab = () => {
     if (tabs.length < 5) {
+      const sessionId = crypto.randomUUID().replace(/-/g, '');
       setTabs([
         ...tabs,
-        { chatId: "", messages: [], question: "", file: null },
+        { chatId: sessionId, messages: [], question: "", file: null },
       ]);
       setTabIndex(tabs.length);
       handleTabFile();
