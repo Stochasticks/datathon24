@@ -1,3 +1,4 @@
+import mimetypes
 import boto3
 from botocore.exceptions import ClientError
 
@@ -9,12 +10,22 @@ class BedrockService:
 
     def upload_document_to_s3(self, document_bytes, document_name):
         try:
+            content_type, _ = mimetypes.guess_type(document_name)
+            if content_type is None:
+                # Fallback to a default type if detection fails
+                content_type = 'application/octet-stream'
+
             # Upload the document to S3
             self.s3_client.put_object(
                 Bucket=self.bucket_name,
                 Key=document_name,
-                Body=document_bytes
+                Body=document_bytes,
+                ContentType=content_type
             )
+            
+            # Wait for the document to be available
+            self.s3_client.head_object(Bucket=self.bucket_name, Key=document_name)
+            
             # Return the URL of the uploaded document
             return f"https://{self.bucket_name}.s3.{self.s3_client.meta.region_name}.amazonaws.com/{document_name}"
         except ClientError as e:
@@ -70,17 +81,17 @@ class BedrockService:
         }
 
     def chat_with_document(self, session_id, question, document_bytes=None, document_name=None):
-        # if document_bytes and document_name:
-        #     document_url = self.upload_document_to_s3(document_bytes, document_name)
-        #     if not document_url:
-        #         return {"message": "Failed to upload document to S3."}
-
-        #     # Optionally include the document URL in the prompt
-        #     input_text = f"{question}\nDocument URL: {document_url}"
-        # else:
-        #     # Construct the input text for the agent
-        #     input_text = question
+        
         input_text = question
+        
+        if document_bytes and document_name:
+            document_url = self.upload_document_to_s3(document_bytes, document_name)
+            if not document_url:
+                return {"message": "Failed to upload document to S3."}
+            
+            print('doc url: ', document_url)
+            input_text = f"{question}\nDocument URL: {document_url}"
+
         
         # Call the invoke_agent method
         return self.invoke_agent(agent_id="HNQWJG3MP3", agent_alias_id="XXWAU1FAEJ", session_id=session_id, prompt=input_text)
