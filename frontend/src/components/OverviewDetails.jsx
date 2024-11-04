@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Table, Thead, Tbody, Tr, Th, Td, Text, useColorModeValue } from "@chakra-ui/react";
+import { Box, Table, Thead, Tbody, Tr, Th, Td, Text, useColorModeValue, Flex } from "@chakra-ui/react";
 import { useDataContext } from "../contexts/DataContext";
 import SentimentScoreBar from "./SentimentScoreBar";
 import consensus_dict from '../utils/consensus_dict';
@@ -94,6 +94,7 @@ const OverviewDetails = () => {
             ))}
         </Tbody>
       </Table>
+      <Flex direction={'column'}>
       <Table size={"sm"} variant="simple" colorScheme="black">
         <Thead>
           <Tr>
@@ -111,7 +112,10 @@ const OverviewDetails = () => {
                 <Td>{formatCurrency(data.financials[key])}</Td>
               </Tr>
             ))}
-          <Box
+          
+        </Tbody>
+      </Table>
+      <Box
             height={"200px"}
             width={"100%"}
             bg={bg}
@@ -129,8 +133,7 @@ const OverviewDetails = () => {
             <Text fontSize={"1xl"} fontWeight={"bold"} mt={4}>Sentiment Score </Text>
             <SentimentScoreBar symbol={state.sentiment?.ticker}/>
           </Box>
-        </Tbody>
-      </Table>
+      </Flex>
     </Box>
   );
 };
