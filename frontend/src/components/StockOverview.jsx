@@ -189,7 +189,7 @@ const StockOverview = ({ symbol, width, height }) => {
           <Spinner />
         ) : (
           <VStack spacing={4} align="start" mt={6} width={"100%"}>
-            <Text fontSize={"2xl"} fontWeight="bold">
+            <Text ml={4} fontSize={"2xl"} fontWeight="bold">
               Similar companies
             </Text>
             <SimpleGrid
