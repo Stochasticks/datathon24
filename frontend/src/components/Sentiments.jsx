@@ -4,7 +4,7 @@ import SentimentContainer from "./SentimentContainer";
 import consensus_dict from '../utils/consensus_dict';
 import { useDataContext } from "../contexts/DataContext";
 import SentimentScoreBar from "./SentimentScoreBar";
-
+import SentimentDrawer from "./SentimentDrawer";
 const Sentiments = ({ symbol }) => {
   const { state } = useDataContext();
 
@@ -46,6 +46,7 @@ const Sentiments = ({ symbol }) => {
           Sentiment Score
         </Text>
         <SentimentScoreBar symbol={symbol}  />
+        <SentimentDrawer/>
       </Flex>
     </Box>
   );
