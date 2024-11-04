@@ -3,8 +3,8 @@ import { Flex, Text, Box } from "@chakra-ui/react";
 const PromptExamples = ({ handleClick }) => {
   const examples = [
     "Give me a resume of the 2023 annual report for CN.",
-    "Resume this balance sheet.",
-    "Resume this income statement.",
+    "Summarize this balance sheet.",
+    "Summarize this income statement.",
   ];
   return (
     <Flex

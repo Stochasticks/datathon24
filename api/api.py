@@ -221,7 +221,7 @@ def get_financial_ratios():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/api/sector_comparison', methods=['GET'])
+@app.route('/api/sectorcomparison', methods=['GET'])
 def sector_comparison():
     stock_symbol = request.args.get('symbol')
     if not stock_symbol:

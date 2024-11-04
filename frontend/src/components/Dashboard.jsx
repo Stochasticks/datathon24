@@ -122,7 +122,7 @@ const Dashboard = () => {
     );
     fetchData(
         "comparison",
-        `${environment.sectorComparisonUrl}/sector_comparison?symbol=${symbol}`
+        `${environment.sectorComparisonUrl}/sectorcomparison?symbol=${symbol}`
     )
   };
 
