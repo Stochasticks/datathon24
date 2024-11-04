@@ -127,7 +127,7 @@ const StockOverview = ({ symbol, width, height }) => {
         }}
       >
         <div style={{ flex: 1 }}>
-          <ButtonGroup spacing="2" mb="4" width="100%">
+          <ButtonGroup spacing="2" mb="4">
             <Button
               colorScheme={timeframe === "1month" ? "blue" : "gray"}
               onClick={() => setTimeframe("1month")}
@@ -190,7 +190,7 @@ const StockOverview = ({ symbol, width, height }) => {
         ) : (
           <VStack spacing={4} align="start" mt={6} width={"100%"}>
             <Text fontSize="lg" fontWeight="bold">
-              Comparison Data
+              Same sector companies
             </Text>
             <SimpleGrid
               columns={{ base: 2, md: 3 }}
@@ -198,61 +198,51 @@ const StockOverview = ({ symbol, width, height }) => {
               width={"100%"}
             >
               {state.comparison?.map((company) => (
-                <Box
-                  key={company.symbol}
-                  borderWidth="1px"
-                  borderRadius="lg"
-                  p={4}
-                >
-                  <Text fontSize="md" fontWeight="bold">
-                    {company.name} ({company.symbol})
-                  </Text>
-                  <VStack align="start" spacing={1}>
-                    <Text>
-                      <b>Current Ratio: </b>
-                      {company.ratios.currentRatio}
-                    </Text>
-                    <Text>
-                      <b>Debt to Equity:</b> {company.ratios.debtToEquity}
-                    </Text>
-                    <Text>
-                      <b>Dividend Yield:</b> {company.ratios.dividendYield}
-                    </Text>
-                    <Text>
-                      <b>Gross Margins:</b>{" "}
-                      {(company.ratios.grossMargins * 100).toFixed(2)}%
-                    </Text>
-                    <Text>
-                      <b>Market Cap:</b> $
-                      {(company.ratios.marketCap / 1e12).toFixed(2)} Trillion
-                    </Text>
-                    <Text>
-                      <b>Operating Margins:</b>{" "}
-                      {(company.ratios.operatingMargins * 100).toFixed(2)}%
-                    </Text>
-                    <Text>
-                      <b>Price to Book:</b> {company.ratios.priceToBook}
-                    </Text>
-                    <Text>
-                      <b>Price to Earnings:</b> {company.ratios.priceToEarnings}
-                    </Text>
-                    <Text>
-                      <b>Profit Margins:</b>{" "}
-                      {(company.ratios.profitMargins * 100).toFixed(2)}%
-                    </Text>
-                    <Text>
-                      <b>Quick Ratio:</b> {company.ratios.quickRatio}
-                    </Text>
-                    <Text>
-                      <b>Return on Equity:</b>{" "}
-                      {(company.ratios.returnOnEquity * 100).toFixed(2)}%
-                    </Text>
-                    <Text>
-                      <b>Volume:</b> {company.ratios.volume.toLocaleString()}
-                    </Text>
-                  </VStack>
-                </Box>
-              ))}
+  <Box key={company?.symbol} borderWidth="1px" borderRadius="lg" p={4}>
+    <Text fontSize="md" fontWeight="bold">
+      {company?.name} ({company?.symbol})
+    </Text>
+    <VStack align="start" spacing={1}>
+      <Text>
+        <b>Current Ratio:</b> {company?.ratios?.currentRatio ?? "N/A"}
+      </Text>
+      <Text>
+        <b>Debt to Equity:</b> {company?.ratios?.debtToEquity ?? "N/A"}
+      </Text>
+      <Text>
+        <b>Dividend Yield:</b> {company?.ratios?.dividendYield ?? "N/A"}
+      </Text>
+      <Text>
+        <b>Gross Margins:</b> {company?.ratios?.grossMargins != null ? (company.ratios.grossMargins * 100).toFixed(2) + "%" : "N/A"}
+      </Text>
+      <Text>
+        <b>Market Cap:</b> {company?.ratios?.marketCap != null ? `$${(company.ratios.marketCap / 1e12).toFixed(2)} Trillion` : "N/A"}
+      </Text>
+      <Text>
+        <b>Operating Margins:</b> {company?.ratios?.operatingMargins != null ? (company.ratios.operatingMargins * 100).toFixed(2) + "%" : "N/A"}
+      </Text>
+      <Text>
+        <b>Price to Book:</b> {company?.ratios?.priceToBook ?? "N/A"}
+      </Text>
+      <Text>
+        <b>Price to Earnings:</b> {company?.ratios?.priceToEarnings ?? "N/A"}
+      </Text>
+      <Text>
+        <b>Profit Margins:</b> {company?.ratios?.profitMargins != null ? (company.ratios.profitMargins * 100).toFixed(2) + "%" : "N/A"}
+      </Text>
+      <Text>
+        <b>Quick Ratio:</b> {company?.ratios?.quickRatio ?? "N/A"}
+      </Text>
+      <Text>
+        <b>Return on Equity:</b> {company?.ratios?.returnOnEquity != null ? (company.ratios.returnOnEquity * 100).toFixed(2) + "%" : "N/A"}
+      </Text>
+      <Text>
+        <b>Volume:</b> {company?.ratios?.volume != null ? company.ratios.volume.toLocaleString() : "N/A"}
+      </Text>
+    </VStack>
+  </Box>
+))}
+
             </SimpleGrid>
           </VStack>
         )}

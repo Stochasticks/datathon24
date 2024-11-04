@@ -241,7 +241,7 @@ def sector_comparison():
 
         count = 0  # Initialize a counter for the number of stocks added
         for ticker_symbol in tickers.tickers.keys():  # Iterate over the keys (ticker symbols)
-            if count >= 5:  # Check if we have already added 5 stocks
+            if count >= 3:  # Check if we have already added 5 stocks
                 break
             try:
                 info = tickers.tickers[ticker_symbol].info

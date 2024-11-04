@@ -27,18 +27,10 @@ const OverviewDetails = () => {
   };
 
   useEffect(() => {
-    // if (typeof state.ratios != "undefined" ) {
-    //   console.log("state.ratios: ", JSON.parse(state.ratios));
     setData({
       ...data,
       ratios: state.ratios?.ratios,
     });
-    // }
-    // console.log("state.ratios?.ratios: ", state.ratios?.ratios);
-    // console.log(
-    //   "Object.keys(data.ratios): ",
-    //   Object.keys(state.ratios?.ratios || [])
-    // );
   }, [state.ratios]);
 
   useEffect(() => {
@@ -50,41 +42,28 @@ const OverviewDetails = () => {
       bs = JSON.parse(bs).data;
       is = JSON.parse(is).data;
 
-      setData({
-        ...data,
+      setData((prevData) => ({
+        ...prevData,
         financials: {
-          "Total Revenue": is.find((item) => item.index == "Total Revenue")[
-            Object.keys(is.find((item) => item.index == "Total Revenue"))[1]
-          ],
-          "Gross Profit": is.find((item) => item.index == "Gross Profit")[
-            Object.keys(is.find((item) => item.index == "Gross Profit"))[1]
-          ],
-          "Total Debt": bs.find((item) => item.index == "Total Debt")[
-            Object.keys(bs.find((item) => item.index == "Total Debt"))[1]
-          ],
+          "Total Revenue": is.find((item) => item.index === "Total Revenue")?.[
+            Object.keys(is.find((item) => item.index === "Total Revenue"))[1]
+          ] || "N/A",
+          "Gross Profit": is.find((item) => item.index === "Gross Profit")?.[
+            Object.keys(is.find((item) => item.index === "Gross Profit"))[1]
+          ] || "N/A",
+          "Total Debt": bs.find((item) => item.index === "Total Debt")?.[
+            Object.keys(bs.find((item) => item.index === "Total Debt"))[1]
+          ] || "N/A",
           "Total Capitalization": bs.find(
-            (item) => item.index == "Total Capitalization"
-          )[
-            Object.keys(
-              bs.find((item) => item.index == "Total Capitalization")
-            )[1]
-          ],
-          //   EBIT: is.find((item) => item.index == "EBIT")[
-          //     Object.keys(is.find((item) => item.index == "EBIT"))[1]
-          //   ],
-          EBITDA: is.find((item) => item.index == "EBITDA")[
-            Object.keys(is.find((item) => item.index == "EBITDA"))[1]
-          ],
+            (item) => item.index === "Total Capitalization"
+          )?.[
+            Object.keys(bs.find((item) => item.index === "Total Capitalization"))[1]
+          ] || "N/A",
+          EBITDA: is.find((item) => item.index === "EBITDA")?.[
+            Object.keys(is.find((item) => item.index === "EBITDA"))[1]
+          ] || "N/A",
         },
-      });
-    //   console.log("state.balanceSheet: ", bs);
-    //   console.log("Object.keys(state.balanceSheet): ", Object.keys(bs || []));
-    //   console.log("state.incomeStatement: ", is);
-    //   console.log("Object.keys(state.incomeStatement): ", {
-    //     EBITDA: is.find((item) => item.index == "EBITDA")[
-    //       Object.keys(is.find((item) => item.index == "EBITDA"))[1]
-    //     ],
-    //   });
+      }));
     }
   }, [state.balanceSheet, state.incomeStatement]);
 
@@ -109,12 +88,6 @@ const OverviewDetails = () => {
                 <Td>{formatNumber(data.ratios[key])}</Td>
               </Tr>
             ))}
-          {/* {data.section1?.rows?.map((row, index) => (
-                        <Tr key={index}>
-                            <Td>{row.key1}</Td>
-                            <Td>{row.key2}</Td>
-                        </Tr>
-                    ))} */}
         </Tbody>
       </Table>
       <Table size={"sm"} variant="simple" colorScheme="black">
