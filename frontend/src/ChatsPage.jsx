@@ -20,16 +20,25 @@ import React, { useState, useRef, useEffect } from "react";
 import { FiUpload, FiSend } from "react-icons/fi";
 import { environment } from "./environments/environment";
 import LoadingSpinner from "./components/LoadingSpinner";
+import { useDataContext } from "./contexts/DataContext";
 
 const ChatsPage = () => {
   const [tabIndex, setTabIndex] = useState(0);
   const [tabs, setTabs] = useState([
-    { chatId: crypto.randomUUID().replace(/-/g, ''), messages: [], question: "", file: null },
+    {
+      chatId: crypto.randomUUID().replace(/-/g, ""),
+      messages: [],
+      question: "",
+      file: null,
+    },
   ]);
   const [uploadMessage, setUploadMessage] = useState("");
   const [chatMessage, setChatMessage] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [sentContext, setSentContext] = useState(false);
+
+  const { state } = useDataContext();
 
   const messagesEndRef = useRef(null);
 
@@ -96,6 +105,16 @@ const ChatsPage = () => {
     if (currentTab.file) {
       const fileArrayBuffer = await currentTab.file.arrayBuffer();
       requestPayload.files = arrayBufferToBase64(fileArrayBuffer); // Convert to array for JSON serialization
+    } else if (!sentContext) {
+      const contextInfo = `
+        my question is this: ${requestPayload.question},
+        use this data as context if needed:
+        balance sheet: ${state.balanceSheet} 
+        income statement: ${state.incomeStatement}
+        cash flow: ${state.cashFlowStatement}
+        ratios: ${state.ratios}
+      `;
+      requestPayload.question = contextInfo;
     }
 
     try {
@@ -147,6 +166,12 @@ const ChatsPage = () => {
           newTabs[tabIndex].file = null; // Clear the uploaded file after sending
           setSelectedFile(null); // Clear the selected file in state
           setLoading(false);
+          if (
+            !sentContext &&
+            requestPayload.question.includes("balance sheet:")
+          ) {
+            setSentContext(true);
+          }
           return newTabs;
         });
 
@@ -173,7 +198,7 @@ const ChatsPage = () => {
 
   const addTab = () => {
     if (tabs.length < 5) {
-      const sessionId = crypto.randomUUID().replace(/-/g, '');
+      const sessionId = crypto.randomUUID().replace(/-/g, "");
       setTabs([
         ...tabs,
         { chatId: sessionId, messages: [], question: "", file: null },
