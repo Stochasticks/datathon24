@@ -110,11 +110,11 @@ const Dashboard = () => {
     );
     fetchData(
       "cashFlowStatement",
-      `${environment.cashFlowUrl}/cash_flow_statement?symbol=${symbol}`
+      `${environment.cashFlowUrl}/cashflow?symbol=${symbol}`
     );
     fetchData(
       "ratios",
-      `${environment.ratiosUrl}/financial_ratios?symbol=${symbol}`
+      `${environment.ratiosUrl}/ratios?symbol=${symbol}`
     );
     fetchData(
         "sentiment",
