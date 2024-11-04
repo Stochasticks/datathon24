@@ -32,7 +32,7 @@ const Financials = () => {
         onChange={handleChangeStatement}
         value={statementType}
         variant={"filled"}
-        color={"black"}
+        color={"white"}
         _hover={{
           cursor: "pointer",
         }}

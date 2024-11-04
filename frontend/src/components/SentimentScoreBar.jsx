@@ -11,22 +11,32 @@ const SentimentScoreBar = ({ symbol }) => {
   const smartScoreBg = useColorModeValue("#e0e0e0", "gray.600");
 
   return (
-        <Flex width="80%" align="center" justify="center">
-          <Box width="80%" height="20px" bg={smartScoreBg} borderRadius="lg" overflow="hidden">
-            <Box
-              width={`${(state.sentiment?.smartScore / 10) * 100}%`}
-              height="100%"
-              bg="linear-gradient(90deg, red, orange, gold, green)"
-              borderRadius="lg 0 0 lg"
-            />
-          </Box>
-          <Text ml={4} fontSize="3xl" fontWeight="bold" color="teal.500">
-            {state.sentiment?.smartScore}
-          </Text>
-          <Tooltip label={"Scores - Underperform : [1-3], Neutral : [4-7], Outperform : [8-10] "}>
-            <InfoOutlineIcon boxSize={3}/>
-          </Tooltip>
-        </Flex>
+    <Flex width="80%" align="center" justify="center">
+  <Box width="80%" height="20px" bg={smartScoreBg} borderRadius="lg" overflow="hidden">
+    <Box
+      width={`${(state.sentiment?.smartScore / 10) * 100}%`}
+      height="100%"
+      bg="linear-gradient(90deg, red, orange, gold, green)"
+      borderRadius="lg 0 0 lg"
+    />
+  </Box>
+  <Text ml={4} fontSize="3xl" fontWeight="bold" color="teal.500">
+    {state.sentiment?.smartScore}
+  </Text>
+  <Tooltip
+    label="Scores - Underperform : [1-3], Neutral : [4-7], Outperform : [8-10]"
+    hasArrow
+    placement="top"
+    bg="teal.600"
+    color="white"
+  >
+    <span>
+      <InfoOutlineIcon boxSize={3} ml={2} cursor="pointer" />
+    </span>
+  </Tooltip>
+</Flex>
+
+  
   );
 };
 
