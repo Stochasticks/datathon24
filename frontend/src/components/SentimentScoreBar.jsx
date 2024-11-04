@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Box, Text, Flex, useColorModeValue } from "@chakra-ui/react";
+import { Box, Text, Flex, useColorModeValue, Tooltip } from "@chakra-ui/react";
 import { useDataContext } from "../contexts/DataContext";
+import {InfoOutlineIcon} from '@chakra-ui/icons'
 
 const SentimentScoreBar = ({ symbol }) => {
   const { state } = useDataContext();
@@ -22,6 +23,9 @@ const SentimentScoreBar = ({ symbol }) => {
           <Text ml={4} fontSize="3xl" fontWeight="bold" color="teal.500">
             {state.sentiment?.smartScore}
           </Text>
+          <Tooltip label={"Scores - Underperform : [1-3], Neutral : [4-7], Outperform : [8-10] "}>
+            <InfoOutlineIcon boxSize={3}/>
+          </Tooltip>
         </Flex>
   );
 };
