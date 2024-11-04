@@ -1,36 +1,57 @@
-import React, { useEffect, useState } from "react";
-import { Text } from "@chakra-ui/react";
+import React from "react";
+import { Box, Flex, Text, useColorModeValue } from "@chakra-ui/react";
 
-const SentimentContainer = (props) => {
-  if (props.consensus == null) return null;
+const SentimentContainer = ({ name, consensus, bullishScore }) => {
+  if (!consensus) return null;
+
+  const bg = useColorModeValue("whiteAlpha.800", "gray.700");
+  const textColor = useColorModeValue("gray.600", "gray.300");
+  const scoreColor = useColorModeValue("teal.500", "teal.300");
+
   return (
-        <div
-                style={{
-                width: "33%",
-                height: "300px",
-                backgroundColor: "rgba(255,255,255,0.5)",
-                borderRadius: "10px",
-                margin: "0 4px"}}
-        >
-                  <Text fontSize="2xl" mb={4} mt={4} style={{ width: "100%", textAlign: "center", fontWeight: "bold" }} >{props.name}</Text>  
-                  <div style={{display:'flex',flexDirection:'column', width:"100%", justifyContent:'center',alignItems:"center", alignContent:"center"}}>
-                    <Text style={{textAlign: "center", fontWeight:"bold"}}>Consensus</Text>
-                    <div style={{display: "flex", width: "100px",height: "100px",backgroundColor: props.consensus.color, borderRadius: "50%", justifyContent:'center', alignItems:'center'}}>
-                      <Text color={'white'} style={{fontWeight:"bold", fontSize:"14px"}}>{props.consensus.label}</Text>
-                    </div>
-                  </div>
-                <div style={{height:'8px'}}/>
-                {
-                  props.bullishScore > 0 ? (
-                    <div>
-                      <Text style={{ textAlign: "center", fontWeight: "bold" }}>Percentage bullish</Text>
-                      <Text style={{ fontSize: "30px", fontWeight: "bold", textAlign: "center" }}>
-                        {props.bullishScore}
-                      </Text>
-                    </div>
-                  ) : null
-                }
-      </div>
+    <Box
+      width="33%"
+      height="300px"
+      bg={bg}
+      borderRadius="lg"
+      boxShadow="md"
+      mx="4px"
+      p="6"
+      display="flex"
+      flexDirection="column"
+      justifyContent="flex-start"
+      alignItems="center"
+      textAlign="center"
+    >
+      <Text fontSize="xl" fontWeight="semibold" mb="2" color={textColor}>
+        {name}
+      </Text>
+      <Text fontSize="md" color={textColor} mb="4">
+        Consensus
+      </Text>
+      <Flex
+        width="100px"
+        height="100px"
+        bg={consensus.color}
+        borderRadius="full"
+        align="center"
+        justify="center"
+        mb="4"
+        boxShadow="base"
+      >
+        <Text color="white" fontWeight="bold" fontSize="lg">
+          {consensus.label}
+        </Text>
+      </Flex>
+      {bullishScore > 0 && (
+        <Box>
+          <Text fontSize="md" color={textColor} mb="1">Percentage Bullish</Text>
+          <Text fontSize="3xl" fontWeight="bold" color={scoreColor}>
+            {bullishScore}%
+          </Text>
+        </Box>
+      )}
+    </Box>
   );
 };
 

@@ -106,11 +106,11 @@ const Dashboard = () => {
     );
     fetchData(
       "balanceSheet",
-      `${environment.serverUrl}/balance_sheet?symbol=${symbol}`
+      `${environment.balanceSheetUrl}/balance_sheet?symbol=${symbol}`
     );
     fetchData(
       "incomeStatement",
-      `${environment.serverUrl}/income_statement?symbol=${symbol}`
+      `${environment.incomeStatementUrl}/income_statement?symbol=${symbol}`
     );
     fetchData(
       "cashFlowStatement",
