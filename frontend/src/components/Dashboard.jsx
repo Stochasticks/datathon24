@@ -115,12 +115,16 @@ const Dashboard = () => {
     );
     fetchData(
       "cashFlowStatement",
-      `${environment.serverUrl}/cash_flow_statement?symbol=${symbol}`
+      `${environment.cashFlowUrl}/cash_flow_statement?symbol=${symbol}`
     );
     fetchData(
       "ratios",
-      `${environment.serverUrl}/financial_ratios?symbol=${symbol}`
+      `${environment.ratiosUrl}/financial_ratios?symbol=${symbol}`
     );
+    fetchData(
+        "sentiment",
+        `${environment.sentimentUrl}/ticker_info/invsentiment?ticker=${symbol}`
+    )
   };
 
   useEffect(() => {

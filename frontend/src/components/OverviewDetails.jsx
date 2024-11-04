@@ -21,7 +21,6 @@ const OverviewDetails = () => {
   };
 
   const formatNumber = (number) => {
-    console.log("number: ", number);
     if (`${number}`.includes(".")) return number;
     if (number === null || number === undefined) return "-";
     return number.toLocaleString();
@@ -78,14 +77,14 @@ const OverviewDetails = () => {
           ],
         },
       });
-      console.log("state.balanceSheet: ", bs);
-      console.log("Object.keys(state.balanceSheet): ", Object.keys(bs || []));
-      console.log("state.incomeStatement: ", is);
-      console.log("Object.keys(state.incomeStatement): ", {
-        EBITDA: is.find((item) => item.index == "EBITDA")[
-          Object.keys(is.find((item) => item.index == "EBITDA"))[1]
-        ],
-      });
+    //   console.log("state.balanceSheet: ", bs);
+    //   console.log("Object.keys(state.balanceSheet): ", Object.keys(bs || []));
+    //   console.log("state.incomeStatement: ", is);
+    //   console.log("Object.keys(state.incomeStatement): ", {
+    //     EBITDA: is.find((item) => item.index == "EBITDA")[
+    //       Object.keys(is.find((item) => item.index == "EBITDA"))[1]
+    //     ],
+    //   });
     }
   }, [state.balanceSheet, state.incomeStatement]);
 

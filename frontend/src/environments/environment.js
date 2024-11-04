@@ -17,6 +17,7 @@ export const environment = {
     incomeStatementUrl: `${production ? 'https://614ixqofuc.execute-api.us-west-2.amazonaws.com/default' : 'http://127.0.0.1:9999/api'}`,
     cashFlowUrl: `${production ? 'https://614ixqofuc.execute-api.us-west-2.amazonaws.com/default' : 'http://127.0.0.1:9999/api'}`,
     ratiosUrl: `${production ? 'https://614ixqofuc.execute-api.us-west-2.amazonaws.com/default' : 'http://127.0.0.1:9999/api'}`,
+    sentimentUrl: `${production ? 'https://u2et6buhf3.execute-api.us-west-2.amazonaws.com' : 'https://u2et6buhf3.execute-api.us-west-2.amazonaws.com'}`,
     chatURL: `${production ? 'https://7wvo8rflv2.execute-api.us-west-2.amazonaws.com/api' : 'http://localhost:8000/api'}`,
     socketManagerUrl: `${production ? 'tbd:9000' : 'localhost:9000'}`,
     cosineSocketUrl:`${production ? 'tbd:9000' : 'localhost:9000'}`,

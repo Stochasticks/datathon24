@@ -38,7 +38,19 @@ export const DataProvider = ({ children }) => {
 
         // Check if the response is JSON, otherwise fall back to text
         let data;
-        if (contentType && contentType.includes("application/json")) {
+        
+        if (url.includes('invsentiment')) {
+            // console.log("response.json(): ", await response.json())
+            const parsedResponse = JSON.parse((await response.json()).body);
+            console.log('parsedResponse: ', parsedResponse)
+            const new_data = parsedResponse.message
+              .replace(/'/g, '"')
+              .replace(/\bNone\b/g, "null")
+              .replace(/'\b-'\b/g, "null");
+            console.log('new_data: ', new_data)
+            data = JSON.parse(new_data)[0];
+            console.log('data: ', data)
+        } else if (contentType && contentType.includes("application/json")) {
             data = await response.json();
             // console.log('json resp: ', data)
             if (data.body) {
