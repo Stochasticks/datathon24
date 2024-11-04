@@ -112,13 +112,13 @@ const ChatsPage = () => {
       requestPayload.files = arrayBufferToBase64(fileArrayBuffer); // Convert to array for JSON serialization
     } else if (!sentContext) {
       const contextInfo = `
-        my question is this: ${requestPayload.question},
-        use this data as context if needed:
-        balance sheet: ${state.balanceSheet} 
-        income statement: ${state.incomeStatement}
-        cash flow: ${state.cashFlowStatement}
-        ratios: ${state.ratios}
-        same sector companies for comparison: ${state.comparison}
+        My question is this: ${requestPayload.question},
+        Use this data as context if needed:
+        Balance sheet: ${state.balanceSheet} 
+        Income statement: ${state.incomeStatement}
+        Cash flow: ${state.cashFlowStatement}
+        Ratios: ${state.ratios}
+        Similar companies for comparison: ${state.comparison}
       `;
       requestPayload.question = contextInfo;
     }
