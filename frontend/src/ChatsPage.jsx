@@ -42,6 +42,7 @@ const ChatsPage = () => {
   }, [tabs[tabIndex]?.messages]);
 
   const handleFileChange = (e) => {
+    console.log("files: ", e.target.files[0]);
     const file = e.target.files[0]; // Only one file for simplicity
     if (file) {
       setSelectedFile(file);
@@ -159,6 +160,17 @@ const ChatsPage = () => {
     setLoading(false);
   };
 
+  const handleTabFile = () => {
+    const el = document.querySelector("#file-upload-button");
+    // Check if the element exists and is an input type file
+    if (el && el.type === "file") {
+      el.value = ""; // Clear the file input
+    } else {
+      console.error("Element not found or not a file input");
+    }
+    setSelectedFile(null);
+  };
+
   const addTab = () => {
     if (tabs.length < 5) {
       setTabs([
@@ -166,6 +178,7 @@ const ChatsPage = () => {
         { chatId: "", messages: [], question: "", file: null },
       ]);
       setTabIndex(tabs.length);
+      handleTabFile();
     }
   };
 
@@ -174,6 +187,7 @@ const ChatsPage = () => {
       const newTabs = tabs.filter((_, i) => i !== index);
       setTabs(newTabs);
       setTabIndex(index === 0 ? 0 : index - 1);
+      handleTabFile();
     }
   };
 
@@ -286,6 +300,7 @@ const ChatsPage = () => {
               type="file"
               accept="*/*" // Allow all file types
               position="absolute"
+              id="file-upload-button"
               top="0"
               left="0"
               opacity="0"

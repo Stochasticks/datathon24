@@ -26,23 +26,27 @@ def chat_with_document():
     question = request.json_body.get('question')
     # print(question)
 
-    if 'files' in request.json_body.keys():
-        file_data = request.json_body.get('files')
-        
-        # If file_data is a list, join it into a single base64 string
-        if isinstance(file_data, list):
-            file_data = "".join(map(str, file_data))
-        
-        # Add padding if necessary
-        padding_needed = len(file_data) % 4
-        if padding_needed:
-            file_data += '=' * (4 - padding_needed)
+    file_bytes = None
+    file_name = None
 
-        file_bytes = base64.b64decode(file_data)
-        file_name = request.json_body.get('file_name')
+    if 'files' in request.json_body.keys():
+        if request.json_body.get('files'):
+            file_data = request.json_body.get('files')
+
+            print(file_data)
         
-    else:
-        file_bytes = None
+            # If file_data is a list, join it into a single base64 string
+            if isinstance(file_data, list):
+                file_data = "".join(map(str, file_data))
+            
+            # Add padding if necessary
+            padding_needed = len(file_data) % 4
+            if padding_needed:
+                file_data += '=' * (4 - padding_needed)
+
+            file_bytes = base64.b64decode(file_data)
+            file_name = request.json_body.get('file_name')
+         
 
     if not question:
         return Response(body={"error": "Missing 'chat_id' or 'question'"},
