@@ -285,13 +285,13 @@ const Dashboard = () => {
                         {section?.name || `Chart ${idx + 1}`}
                       </Tab>
                     ))}
-                    <Button
+                    {/* <Button
                       size="sm"
                       ml="2"
                       onClick={() => addChart(sectionKey)}
                     >
                       + Add Chart
-                    </Button>
+                    </Button> */}
                   </TabList>
 
                   <TabPanels>
